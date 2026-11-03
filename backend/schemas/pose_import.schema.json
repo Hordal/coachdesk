@@ -1,0 +1,569 @@
+{
+  "$defs": {
+    "PoseLandmark": {
+      "additionalProperties": true,
+      "description": "팀 연구 포즈의 점 하나. 좌표는 분석 프레임(x_px·y_px)과 정규화 값. visibility·presence는 정확도가 아니다.",
+      "properties": {
+        "finite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finite"
+        },
+        "index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Index"
+        },
+        "off_image": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Off Image"
+        },
+        "presence": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Presence"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visibility"
+        },
+        "x_norm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "X Norm"
+        },
+        "x_px": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "X Px"
+        },
+        "y_norm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Y Norm"
+        },
+        "y_px": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Y Px"
+        },
+        "z_norm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Z Norm"
+        }
+      },
+      "title": "PoseLandmark",
+      "type": "object"
+    },
+    "PoseObservationRecord": {
+      "additionalProperties": true,
+      "description": "`pose_observations.jsonl`(phase1b_v1)·`pose_quality_frames.jsonl`(phase1c_v1)의 한 줄. 포즈 하나의 33점.\n\n전체 프레임의 pose_index는 선수 ID가 아니고, 크롭의 `candidate:N`은 입력 상자 ID이며 역할은 UNRESOLVED다.",
+      "properties": {
+        "arm": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arm"
+        },
+        "attempt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attempt"
+        },
+        "clip_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clip Id"
+        },
+        "crop": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Crop"
+        },
+        "frame_index": {
+          "minimum": 0,
+          "title": "Frame Index",
+          "type": "integer"
+        },
+        "landmarks": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/PoseLandmark"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Landmarks"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode"
+        },
+        "participant_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Participant Id"
+        },
+        "pose_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pose Index"
+        },
+        "raw_landmark_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Landmark Count"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "USER",
+                "OPPONENT",
+                "UNRESOLVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "schema_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema Version"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "timestamp_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Timestamp Us",
+          "type": "integer"
+        },
+        "track_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Track Id"
+        },
+        "tracklet_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracklet Ref"
+        }
+      },
+      "required": [
+        "frame_index",
+        "timestamp_us"
+      ],
+      "title": "PoseObservationRecord",
+      "type": "object"
+    },
+    "PoseQualityRecord": {
+      "additionalProperties": true,
+      "description": "`pose_quality.jsonl`(phase1b_v1)의 한 줄. 관절을 쓸 수 있는지의 판정 기록.",
+      "properties": {
+        "arm": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arm"
+        },
+        "association_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Association Status"
+        },
+        "feature_ready": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature Ready"
+        },
+        "frame_index": {
+          "minimum": 0,
+          "title": "Frame Index",
+          "type": "integer"
+        },
+        "participant_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Participant Id"
+        },
+        "pose_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pose Index"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "USER",
+                "OPPONENT",
+                "UNRESOLVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "statuses": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Statuses",
+          "type": "array"
+        },
+        "timestamp_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Timestamp Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "frame_index",
+        "timestamp_us"
+      ],
+      "title": "PoseQualityRecord",
+      "type": "object"
+    },
+    "WindowCandidateRecord": {
+      "additionalProperties": true,
+      "description": "`window_candidates.jsonl`(phase1c_v1)의 한 줄. 구간 안에서 복원한 선수 후보.",
+      "properties": {
+        "frame_end": {
+          "minimum": 0,
+          "title": "Frame End",
+          "type": "integer"
+        },
+        "frame_start": {
+          "minimum": 0,
+          "title": "Frame Start",
+          "type": "integer"
+        },
+        "participants": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Participants",
+          "type": "array"
+        },
+        "pts_end": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Pts End",
+          "type": "integer"
+        },
+        "pts_start": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Pts Start",
+          "type": "integer"
+        },
+        "rejected_tracks": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Rejected Tracks",
+          "type": "array"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "required": [
+        "frame_start",
+        "frame_end",
+        "pts_start",
+        "pts_end"
+      ],
+      "title": "WindowCandidateRecord",
+      "type": "object"
+    }
+  },
+  "$id": "urn:fight-review:schema:pose-import:0.1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "팀 연구 포즈 가져오기 입력(파일 줄을 그대로). 포즈가 있는 프레임만 들어 있으므로 영상의 모든 프레임이 있을 필요는 없다.",
+  "properties": {
+    "poses": {
+      "items": {
+        "$ref": "#/$defs/PoseObservationRecord"
+      },
+      "title": "Poses",
+      "type": "array"
+    },
+    "quality": {
+      "items": {
+        "$ref": "#/$defs/PoseQualityRecord"
+      },
+      "title": "Quality",
+      "type": "array"
+    },
+    "source": {
+      "default": "MMACoachAgent research",
+      "maxLength": 200,
+      "title": "Source",
+      "type": "string"
+    },
+    "windows": {
+      "items": {
+        "$ref": "#/$defs/WindowCandidateRecord"
+      },
+      "title": "Windows",
+      "type": "array"
+    }
+  },
+  "required": [
+    "poses"
+  ],
+  "title": "PoseImport",
+  "type": "object"
+}

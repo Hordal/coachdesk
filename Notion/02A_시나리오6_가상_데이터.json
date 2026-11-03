@@ -1,0 +1,116 @@
+{
+  "schema_version": "demo-0.2",
+  "dataset_kind": "synthetic",
+  "annotation_source": "synthetic_fixture",
+  "expert_validated": false,
+  "definition_version": "demo-unvalidated",
+  "scenario": "예상 분석 시나리오 6. 반복적인 가드 복귀 실패",
+  "video_id": "demo-video-02",
+  "duration_us": 540000000,
+  "sport": "boxing",
+  "time_unit": "us",
+  "interval_convention": "[start,end)",
+  "notes": [
+    "행동 전 상태는 크로스 시작 직전 1초, 행동 후 상태는 크로스 종료 직후 0.5초 구간으로 임의 설정했다. 실제 기준 시점은 D02·D07에서 정한다.",
+    "‘뒷손 가드 복귀 지연’의 판정 기준은 미정이므로 판정 값은 가상으로 부여했다."
+  ],
+  "participants": [
+    { "participant_id": "A", "role": "USER", "user_designated": true, "body_profile": null },
+    { "participant_id": "B", "role": "OPPONENT", "user_designated": false, "body_profile": null }
+  ],
+  "state_intervals": [
+    { "state_id": "S01", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "high_guard", "start_us": 19000000, "end_us": 20000000 },
+    { "state_id": "S02", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "low_guard", "start_us": 20500000, "end_us": 21000000 },
+    { "state_id": "S03", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "high_guard", "start_us": 49000000, "end_us": 50000000 },
+    { "state_id": "S04", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "high_guard", "start_us": 50500000, "end_us": 51000000 },
+    { "state_id": "S05", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "high_guard", "start_us": 79000000, "end_us": 80000000 },
+    { "state_id": "S06", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "low_guard", "start_us": 80500000, "end_us": 81000000 },
+    { "state_id": "S07", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "high_guard", "start_us": 199000000, "end_us": 200000000 },
+    { "state_id": "S08", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "low_guard", "start_us": 200500000, "end_us": 201000000 },
+    { "state_id": "S09", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "high_guard", "start_us": 259000000, "end_us": 260000000 },
+    { "state_id": "S10", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "high_guard", "start_us": 260500000, "end_us": 261000000 },
+    { "state_id": "S11", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "high_guard", "start_us": 399000000, "end_us": 400000000 },
+    { "state_id": "S12", "participant_id": "A", "body_part": "rear_hand", "state_category": "guard_hand", "label": "low_guard", "start_us": 400500000, "end_us": 401000000 }
+  ],
+  "events": [
+    {"schema_version": "phase1b_v1", "event_id": "E01", "event_label": "CROSS", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 20000000, "end_timestamp_us": 20500000, "phase_marks": {"max_extension_us": 20200000}, "pre_state_refs": ["S01"], "post_state_refs": ["S02"]},
+    {"schema_version": "phase1b_v1", "event_id": "E02", "event_label": "CROSS", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 50000000, "end_timestamp_us": 50500000, "phase_marks": {"max_extension_us": 50200000}, "pre_state_refs": ["S03"], "post_state_refs": ["S04"]},
+    {"schema_version": "phase1b_v1", "event_id": "E03", "event_label": "CROSS", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 80000000, "end_timestamp_us": 80500000, "phase_marks": {"max_extension_us": 80200000}, "pre_state_refs": ["S05"], "post_state_refs": ["S06"]},
+    {"schema_version": "phase1b_v1", "event_id": "E04", "event_label": "CROSS", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 200000000, "end_timestamp_us": 200500000, "phase_marks": {"max_extension_us": 200200000}, "pre_state_refs": ["S07"], "post_state_refs": ["S08"]},
+    {"schema_version": "phase1b_v1", "event_id": "E05", "event_label": "CROSS", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 260000000, "end_timestamp_us": 260500000, "phase_marks": {"max_extension_us": 260200000}, "pre_state_refs": ["S09"], "post_state_refs": ["S10"]},
+    {"schema_version": "phase1b_v1", "event_id": "E06", "event_label": "CROSS", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 400000000, "end_timestamp_us": 400500000, "phase_marks": {"max_extension_us": 400200000}, "pre_state_refs": ["S11"], "post_state_refs": ["S12"]}
+  ],
+  "assessments": [
+    { "assessment_id": "AS01", "subject_ref": "E01", "question_code": "rear_guard_return_delayed", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["S01", "S02"] },
+    { "assessment_id": "AS02", "subject_ref": "E02", "question_code": "rear_guard_return_delayed", "value": "absent", "status": "VALID", "reason_code": null, "input_refs": ["S03", "S04"] },
+    { "assessment_id": "AS03", "subject_ref": "E03", "question_code": "rear_guard_return_delayed", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["S05", "S06"] },
+    { "assessment_id": "AS04", "subject_ref": "E04", "question_code": "rear_guard_return_delayed", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["S07", "S08"] },
+    { "assessment_id": "AS05", "subject_ref": "E05", "question_code": "rear_guard_return_delayed", "value": "absent", "status": "VALID", "reason_code": null, "input_refs": ["S09", "S10"] },
+    { "assessment_id": "AS06", "subject_ref": "E06", "question_code": "rear_guard_return_delayed", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["S11", "S12"] }
+  ],
+  "evidence": [
+    { "evidence_id": "EV01", "video_id": "demo-video-02", "start_us": 19000000, "end_us": 21000000, "participant_refs": ["A"], "availability": "unavailable" },
+    { "evidence_id": "EV02", "video_id": "demo-video-02", "start_us": 49000000, "end_us": 51000000, "participant_refs": ["A"], "availability": "unavailable" },
+    { "evidence_id": "EV03", "video_id": "demo-video-02", "start_us": 79000000, "end_us": 81000000, "participant_refs": ["A"], "availability": "unavailable" },
+    { "evidence_id": "EV04", "video_id": "demo-video-02", "start_us": 199000000, "end_us": 201000000, "participant_refs": ["A"], "availability": "unavailable" },
+    { "evidence_id": "EV05", "video_id": "demo-video-02", "start_us": 259000000, "end_us": 261000000, "participant_refs": ["A"], "availability": "unavailable" },
+    { "evidence_id": "EV06", "video_id": "demo-video-02", "start_us": 399000000, "end_us": 401000000, "participant_refs": ["A"], "availability": "unavailable" }
+  ],
+  "aggregates": [
+    {
+      "aggregate_id": "AG01",
+      "description": "확인된 A 크로스 중 공격 후 뒷손 가드 복귀 지연이 판정된 비율",
+      "counting_unit": "cross_attempt",
+      "scope": { "video_id": "demo-video-02", "participant_id": "A", "interval": "whole_video" },
+      "condition_refs": [],
+      "question_code": "rear_guard_return_delayed",
+      "candidate_refs": ["E01", "E02", "E03", "E04", "E05", "E06"],
+      "denominator_refs": ["E01", "E02", "E03", "E04", "E05", "E06"],
+      "numerator_refs": ["E01", "E03", "E04", "E06"],
+      "unknown_refs": [],
+      "excluded_refs": [],
+      "counts": { "candidates": 6, "denominator": 6, "numerator": 4, "unknown": 0, "excluded": 0 },
+      "ratio": 0.6666666666666666
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F01",
+      "claim_type": "aggregate",
+      "template_id": "repeated_post_action_state",
+      "input_refs": ["AG01"],
+      "evidence_refs": ["EV01", "EV02", "EV03", "EV04", "EV05", "EV06"],
+      "rule_ref": null,
+      "status": "valid",
+      "hold_reason": null
+    },
+    {
+      "finding_id": "F02",
+      "claim_type": "observation",
+      "template_id": "repeated_problem",
+      "input_refs": ["AG01"],
+      "evidence_refs": ["EV01", "EV03", "EV04", "EV06"],
+      "rule_ref": null,
+      "status": "withheld",
+      "hold_reason": "repeated_problem_rule_unvalidated"
+    },
+    {
+      "finding_id": "F03",
+      "claim_type": "correction",
+      "template_id": null,
+      "input_refs": ["AG01"],
+      "evidence_refs": [],
+      "rule_ref": null,
+      "status": "withheld",
+      "hold_reason": "correction_rule_unvalidated"
+    }
+  ],
+  "expected_summary": {
+    "note": "회귀 검사용 기대값. 위 aggregates와 assessments에서 계산되어야 하며 별도 원자료가 아니다.",
+    "observed_crosses": 6,
+    "return_assessable": 6,
+    "return_delayed": 4,
+    "return_not_delayed": 2,
+    "unknown": 0
+  }
+}

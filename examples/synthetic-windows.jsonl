@@ -1,0 +1,1 @@
+{"schema_version": "phase1c_v1", "status": "CANDIDATES_ONLY", "role_policy": "UNRESOLVED", "frame_start": 10, "frame_end": 12, "pts_start": 333333, "pts_end": 400000, "participants": [{"participant_id": "candidate:0", "track_id": 0}], "rejected_tracks": []}

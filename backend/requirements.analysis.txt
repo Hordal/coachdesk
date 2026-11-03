@@ -1,0 +1,3 @@
+# 추가 모델 학습 없이 CPU에서 추론하는 선택 의존성
+mediapipe==0.10.35
+opencv-contrib-python==4.13.0.92

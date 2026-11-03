@@ -1,0 +1,1 @@
+{"event_label": "PUNCH_CANDIDATE", "status": "CANDIDATE", "verified": false, "outcome": "UNKNOWN", "participant_id": "candidate:0", "role": "UNRESOLVED", "track_id": 0, "synthetic": true, "start_timestamp_us": 1000000, "end_timestamp_us": 1400000, "start_frame_index": 30, "end_frame_index": 42, "limitations": ["SYNTHETIC_UI_TEST_ONLY", "NO_VERIFIED_CONTACT"]}

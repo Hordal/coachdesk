@@ -1,0 +1,772 @@
+{
+  "$defs": {
+    "DetectionObs": {
+      "additionalProperties": true,
+      "description": "검출 하나. 기준 이름은 `bbox_xyxy`·`score`이고 실험용 산출물의 `bbox`·`confidence`도 받는다.",
+      "properties": {
+        "bbox_xyxy": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox Xyxy",
+          "type": "array"
+        },
+        "class_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Class Id"
+        },
+        "class_name": {
+          "default": "person",
+          "title": "Class Name",
+          "type": "string"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "score",
+        "bbox_xyxy"
+      ],
+      "title": "DetectionObs",
+      "type": "object"
+    },
+    "DetectionRecord": {
+      "additionalProperties": true,
+      "description": "`detection_frames.jsonl`의 한 줄. 좌표는 분석 프레임(coordinate_space=analysis_frame_xyxy_px)이다.",
+      "properties": {
+        "coordinate_space": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coordinate Space"
+        },
+        "detections": {
+          "items": {
+            "$ref": "#/$defs/DetectionObs"
+          },
+          "title": "Detections",
+          "type": "array"
+        },
+        "frame_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "없으면 줄 순서를 프레임 번호로 본다(기준 형식에는 없음)",
+          "title": "Frame Index"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "timestamp_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Timestamp Us",
+          "type": "integer"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        }
+      },
+      "required": [
+        "timestamp_us"
+      ],
+      "title": "DetectionRecord",
+      "type": "object"
+    },
+    "FrameTransform": {
+      "additionalProperties": false,
+      "description": "분석 프레임과 표시·부호화 프레임의 대응(03).\n\n분석 영상은 표시 영상을 비율을 유지해 분석 크기 안에 맞추고(letterbox) 남는 곳을 가운데 정렬로 채운 것이다.\nanalysis = display × scale + pad이고, 표시 영상은 부호화 프레임에 회전(시계 방향)을 적용한 영상이다.\nMMACoachAgent 저장소의 `fit_transform`·`inverse_rotation`과 같은 규칙이다.",
+      "properties": {
+        "analysis_height": {
+          "exclusiveMinimum": 0,
+          "title": "Analysis Height",
+          "type": "integer"
+        },
+        "analysis_width": {
+          "exclusiveMinimum": 0,
+          "title": "Analysis Width",
+          "type": "integer"
+        },
+        "coded_height": {
+          "exclusiveMinimum": 0,
+          "title": "Coded Height",
+          "type": "integer"
+        },
+        "coded_width": {
+          "exclusiveMinimum": 0,
+          "title": "Coded Width",
+          "type": "integer"
+        },
+        "display_height": {
+          "exclusiveMinimum": 0,
+          "title": "Display Height",
+          "type": "integer"
+        },
+        "display_width": {
+          "exclusiveMinimum": 0,
+          "title": "Display Width",
+          "type": "integer"
+        },
+        "pad_x": {
+          "default": 0.0,
+          "title": "Pad X",
+          "type": "number"
+        },
+        "pad_y": {
+          "default": 0.0,
+          "title": "Pad Y",
+          "type": "number"
+        },
+        "rotation_degrees": {
+          "default": 0,
+          "title": "Rotation Degrees",
+          "type": "integer"
+        },
+        "scale": {
+          "exclusiveMinimum": 0,
+          "title": "Scale",
+          "type": "number"
+        }
+      },
+      "required": [
+        "coded_width",
+        "coded_height",
+        "display_width",
+        "display_height",
+        "analysis_width",
+        "analysis_height",
+        "scale"
+      ],
+      "title": "FrameTransform",
+      "type": "object"
+    },
+    "PoseFrame": {
+      "additionalProperties": false,
+      "description": "한 프레임·한 선수의 관절. 좌표는 분석 프레임(analysis_px)이며 값이 없으면 null이고 0으로 채우지 않는다.",
+      "properties": {
+        "keypoints": {
+          "additionalProperties": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Keypoints",
+          "type": "object"
+        },
+        "participant_id": {
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "status": {
+          "default": "VALID",
+          "enum": [
+            "VALID",
+            "UNKNOWN",
+            "UNSUPPORTED",
+            "ERROR"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "timestamp_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Timestamp Us",
+          "type": "integer"
+        },
+        "track_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Track Id"
+        }
+      },
+      "required": [
+        "timestamp_us",
+        "participant_id",
+        "keypoints"
+      ],
+      "title": "PoseFrame",
+      "type": "object"
+    },
+    "PoseSet": {
+      "additionalProperties": false,
+      "description": "한 영상의 관절 관측. 프레임별 대량 데이터이므로 결과 묶음(ResultBundle)과 따로 다룬다(14).",
+      "properties": {
+        "connections": {
+          "description": "관절 이름 쌍. 뼈대 선",
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Connections",
+          "type": "array"
+        },
+        "coordinate_space_id": {
+          "title": "Coordinate Space Id",
+          "type": "string"
+        },
+        "frames": {
+          "items": {
+            "$ref": "#/$defs/PoseFrame"
+          },
+          "title": "Frames",
+          "type": "array"
+        },
+        "landmark_set_id": {
+          "title": "Landmark Set Id",
+          "type": "string"
+        },
+        "transform": {
+          "$ref": "#/$defs/FrameTransform"
+        }
+      },
+      "required": [
+        "landmark_set_id",
+        "coordinate_space_id",
+        "transform",
+        "frames"
+      ],
+      "title": "PoseSet",
+      "type": "object"
+    },
+    "TrackAssignment": {
+      "additionalProperties": false,
+      "description": "사용자가 고른 선수와 추적 번호의 대응. 선택 전에는 만들지 않고 상태를 NOT_RUN으로 둔다.",
+      "properties": {
+        "end_us": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Us"
+        },
+        "participant_id": {
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "USER",
+            "OPPONENT"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "source": {
+          "default": "user_selection",
+          "enum": [
+            "user_selection",
+            "auto"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "start_us": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Us"
+        },
+        "track_ids": {
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Track Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "participant_id",
+        "role",
+        "track_ids"
+      ],
+      "title": "TrackAssignment",
+      "type": "object"
+    },
+    "TrackAssignmentSet": {
+      "additionalProperties": false,
+      "properties": {
+        "assignments": {
+          "items": {
+            "$ref": "#/$defs/TrackAssignment"
+          },
+          "title": "Assignments",
+          "type": "array"
+        },
+        "state": {
+          "default": "NOT_RUN",
+          "enum": [
+            "NOT_RUN",
+            "ASSIGNED"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "title": "TrackAssignmentSet",
+      "type": "object"
+    },
+    "TrackObs": {
+      "additionalProperties": true,
+      "description": "트랙의 한 프레임 관측. 기준 이름은 `bbox_xyxy`·`tracking_score`이고 실험용 산출물의 `bbox`·`confidence`도 받는다.",
+      "properties": {
+        "bbox_xyxy": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox Xyxy",
+          "type": "array"
+        },
+        "class_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Class Id"
+        },
+        "class_name": {
+          "default": "person",
+          "title": "Class Name",
+          "type": "string"
+        },
+        "track_id": {
+          "title": "Track Id",
+          "type": "integer"
+        },
+        "tracking_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracking Score"
+        },
+        "tracking_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracking State"
+        }
+      },
+      "required": [
+        "track_id",
+        "bbox_xyxy"
+      ],
+      "title": "TrackObs",
+      "type": "object"
+    },
+    "TrackRecord": {
+      "additionalProperties": true,
+      "description": "`tracking_frames.jsonl`의 한 줄. track_id는 추적기의 임시 번호이며 participant_id가 아니다.",
+      "properties": {
+        "frame_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "없으면 줄 순서를 프레임 번호로 본다(기준 형식에는 없음)",
+          "title": "Frame Index"
+        },
+        "timestamp_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Timestamp Us",
+          "type": "integer"
+        },
+        "tracks": {
+          "items": {
+            "$ref": "#/$defs/TrackObs"
+          },
+          "title": "Tracks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "timestamp_us"
+      ],
+      "title": "TrackRecord",
+      "type": "object"
+    },
+    "VideoMetadata": {
+      "description": "선수 검출·추적 파이프라인의 `metadata.json`(영상 전처리 결과). 우리가 만든 형식이 아니므로 모르는 필드는 무시한다.",
+      "properties": {
+        "analysis_height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Analysis Height"
+        },
+        "analysis_width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Analysis Width"
+        },
+        "codec": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Codec"
+        },
+        "coded_height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coded Height"
+        },
+        "coded_width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coded Width"
+        },
+        "derivative_frame_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Derivative Frame Count"
+        },
+        "duration_us": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Us"
+        },
+        "fps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fps"
+        },
+        "frame_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frame Count"
+        },
+        "frame_timestamps_us": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Frame Timestamps Us",
+          "type": "array"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "is_vfr": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Vfr"
+        },
+        "rotation_degrees": {
+          "default": 0,
+          "title": "Rotation Degrees",
+          "type": "integer"
+        },
+        "source": {
+          "default": "",
+          "title": "Source",
+          "type": "string"
+        },
+        "start_time_us": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Time Us"
+        },
+        "time_base": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Base"
+        },
+        "timestamp_basis": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timestamp Basis"
+        },
+        "transform": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FrameTransform"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        }
+      },
+      "title": "VideoMetadata",
+      "type": "object"
+    }
+  },
+  "$id": "urn:fight-review:schema:observations:0.2",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

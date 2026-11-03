@@ -1,0 +1,1449 @@
+{
+  "$defs": {
+    "Aggregate": {
+      "additionalProperties": false,
+      "properties": {
+        "aggregate_id": {
+          "title": "Aggregate Id",
+          "type": "string"
+        },
+        "candidate_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Refs",
+          "type": "array"
+        },
+        "condition_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Condition Refs",
+          "type": "array"
+        },
+        "contact_region_condition": {
+          "anyOf": [
+            {
+              "enum": [
+                "head",
+                "body",
+                "leg",
+                "guard",
+                "unclear"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Region Condition"
+        },
+        "counting_unit": {
+          "title": "Counting Unit",
+          "type": "string"
+        },
+        "counts": {
+          "$ref": "#/$defs/AggregateCounts"
+        },
+        "denominator_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Denominator Refs",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "excluded_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Refs",
+          "type": "array"
+        },
+        "numerator_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Numerator Refs",
+          "type": "array"
+        },
+        "question_code": {
+          "title": "Question Code",
+          "type": "string"
+        },
+        "ratio": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "분모 0이면 null",
+          "title": "Ratio"
+        },
+        "scope": {
+          "$ref": "#/$defs/AggregateScope"
+        },
+        "unknown_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknown Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "aggregate_id",
+        "counting_unit",
+        "scope",
+        "question_code",
+        "candidate_refs",
+        "denominator_refs",
+        "numerator_refs",
+        "unknown_refs",
+        "excluded_refs",
+        "counts"
+      ],
+      "title": "Aggregate",
+      "type": "object"
+    },
+    "AggregateCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "minimum": 0,
+          "title": "Candidates",
+          "type": "integer"
+        },
+        "denominator": {
+          "minimum": 0,
+          "title": "Denominator",
+          "type": "integer"
+        },
+        "excluded": {
+          "minimum": 0,
+          "title": "Excluded",
+          "type": "integer"
+        },
+        "numerator": {
+          "minimum": 0,
+          "title": "Numerator",
+          "type": "integer"
+        },
+        "unknown": {
+          "minimum": 0,
+          "title": "Unknown",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "candidates",
+        "denominator",
+        "numerator",
+        "unknown",
+        "excluded"
+      ],
+      "title": "AggregateCounts",
+      "type": "object"
+    },
+    "AggregateScope": {
+      "additionalProperties": false,
+      "properties": {
+        "interval": {
+          "title": "Interval",
+          "type": "string"
+        },
+        "participant_id": {
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "video_id": {
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "participant_id",
+        "interval"
+      ],
+      "title": "AggregateScope",
+      "type": "object"
+    },
+    "Assessment": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment_id": {
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "contact_region": {
+          "anyOf": [
+            {
+              "enum": [
+                "head",
+                "body",
+                "leg",
+                "guard",
+                "unclear"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Region"
+        },
+        "input_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Refs",
+          "type": "array"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "question_code": {
+          "title": "Question Code",
+          "type": "string"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason Code"
+        },
+        "status": {
+          "enum": [
+            "VALID",
+            "UNKNOWN",
+            "UNSUPPORTED",
+            "ERROR"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "subject_ref": {
+          "title": "Subject Ref",
+          "type": "string"
+        },
+        "value": {
+          "enum": [
+            "present",
+            "absent",
+            "unknown",
+            "not_applicable"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assessment_id",
+        "subject_ref",
+        "question_code",
+        "value",
+        "status"
+      ],
+      "title": "Assessment",
+      "type": "object"
+    },
+    "BodyProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "entered_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339",
+          "title": "Entered At"
+        },
+        "height_cm": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height Cm"
+        },
+        "main_stance": {
+          "anyOf": [
+            {
+              "enum": [
+                "orthodox",
+                "southpaw",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Main Stance"
+        },
+        "reach_cm": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reach Cm"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "user_provided",
+                "measured"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "title": "BodyProfile",
+      "type": "object"
+    },
+    "Event": {
+      "additionalProperties": true,
+      "description": "팀 동작 검출 모델의 사건 형식(phase1b_v1)을 그대로 따른다.\n\n필드 이름·의미는 팀 출력(`action_candidates.jsonl`)과 같다. 팀 형식에 없는 필드는 서버가 쓰는 확장이다:\n`event_id`(집계·관계·근거가 가리키는 ID. 가져오기 입력(EventIn)에서는 비우면 서버가 만든다), `target_participant_id`(상대 선수),\n`evidence_ref`(영상 구간 근거), `confidence`, 접촉면·상태 참조. 그라운드 필드(33)는 `event_label`이 그라운드 사건일 때만 쓴다.",
+      "properties": {
+        "arm": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arm"
+        },
+        "bottom_participant_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bottom Participant Id"
+        },
+        "clip_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clip Id"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "내부 판정·평가용. 화면의 정확도가 아니다",
+          "title": "Confidence"
+        },
+        "contamination_gates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Contamination Gates",
+          "type": "array"
+        },
+        "end_frame_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Frame Index"
+        },
+        "end_timestamp_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "End Timestamp Us",
+          "type": "integer"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "event_label": {
+          "title": "Event Label",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceMeasure"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "evidence_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Path"
+        },
+        "evidence_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Ref"
+        },
+        "finish_context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finish Context"
+        },
+        "input_joint_quality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Joint Quality"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outcome"
+        },
+        "participant_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Participant Id"
+        },
+        "phase_marks": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Marks"
+        },
+        "post_state_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Post State Refs",
+          "type": "array"
+        },
+        "pre_state_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pre State Refs",
+          "type": "array"
+        },
+        "reason_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "relation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relation"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "USER",
+                "OPPONENT",
+                "UNRESOLVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "rule_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Version"
+        },
+        "schema_version": {
+          "default": "phase1b_v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_surface": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Surface"
+        },
+        "start_frame_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Frame Index"
+        },
+        "start_timestamp_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Start Timestamp Us",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "CANDIDATE",
+            "VALID",
+            "UNKNOWN"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "synthetic": {
+          "default": false,
+          "title": "Synthetic",
+          "type": "boolean"
+        },
+        "target_participant_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Participant Id"
+        },
+        "target_surface": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Surface"
+        },
+        "top_participant_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top Participant Id"
+        },
+        "track_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Track Id"
+        },
+        "tracklet_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracklet Ref"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "verified": {
+          "default": false,
+          "title": "Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "event_id",
+        "event_label",
+        "status",
+        "start_timestamp_us",
+        "end_timestamp_us"
+      ],
+      "title": "Event",
+      "type": "object"
+    },
+    "EventRelation": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assessment Ref"
+        },
+        "basis": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Basis"
+        },
+        "object_event_id": {
+          "title": "Object Event Id",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "counter_to",
+            "contact_of",
+            "followed_by"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "relation_id": {
+          "title": "Relation Id",
+          "type": "string"
+        },
+        "subject_event_id": {
+          "title": "Subject Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation_id",
+        "subject_event_id",
+        "relation",
+        "object_event_id"
+      ],
+      "title": "EventRelation",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "enum": [
+            "available",
+            "expired",
+            "deleted",
+            "unavailable"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "end_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "End Us",
+          "type": "integer"
+        },
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "participant_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Participant Refs",
+          "type": "array"
+        },
+        "start_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Start Us",
+          "type": "integer"
+        },
+        "video_id": {
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "video_id",
+        "start_us",
+        "end_us",
+        "availability"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "EvidenceMeasure": {
+      "additionalProperties": true,
+      "description": "사건에 붙는 근거 측정 항목(팀 동작 검출 모델의 `evidence` 한 줄). 영상 구간 근거(Evidence)와 다르다.",
+      "properties": {
+        "measure": {
+          "title": "Measure",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "measure"
+      ],
+      "title": "EvidenceMeasure",
+      "type": "object"
+    },
+    "Exchange": {
+      "additionalProperties": false,
+      "properties": {
+        "anchor_event_id": {
+          "title": "Anchor Event Id",
+          "type": "string"
+        },
+        "end_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "End Us",
+          "type": "integer"
+        },
+        "event_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Event Refs",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "exchange_id": {
+          "title": "Exchange Id",
+          "type": "string"
+        },
+        "participant_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Participant Ids",
+          "type": "array"
+        },
+        "relation_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Relation Refs",
+          "type": "array"
+        },
+        "start_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Start Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "exchange_id",
+        "anchor_event_id",
+        "participant_ids",
+        "start_us",
+        "end_us",
+        "event_refs"
+      ],
+      "title": "Exchange",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_type": {
+          "enum": [
+            "observation",
+            "aggregate",
+            "causal_hypothesis",
+            "correction"
+          ],
+          "title": "Claim Type",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "finding_id": {
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "hold_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hold Reason"
+        },
+        "input_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Refs",
+          "type": "array"
+        },
+        "rule_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Ref"
+        },
+        "status": {
+          "enum": [
+            "valid",
+            "withheld"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        }
+      },
+      "required": [
+        "finding_id",
+        "claim_type",
+        "input_refs",
+        "status"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "MetricSample": {
+      "additionalProperties": false,
+      "properties": {
+        "definition_id": {
+          "title": "Definition Id",
+          "type": "string"
+        },
+        "definition_version": {
+          "title": "Definition Version",
+          "type": "string"
+        },
+        "end_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "End Us",
+          "type": "integer"
+        },
+        "metric_id": {
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "participant_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Participant Id"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason Code"
+        },
+        "start_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Start Us",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "VALID",
+            "UNKNOWN",
+            "UNSUPPORTED",
+            "ERROR"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "metric_id",
+        "definition_id",
+        "definition_version",
+        "start_us",
+        "end_us",
+        "status"
+      ],
+      "title": "MetricSample",
+      "type": "object"
+    },
+    "Participant": {
+      "additionalProperties": false,
+      "properties": {
+        "body_profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BodyProfile"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "participant_id": {
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "USER",
+            "OPPONENT",
+            "UNRESOLVED"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "track_ids": {
+          "description": "이 선수에 연결된 추적 번호. 한 선수에 여러 개일 수 있다",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Track Ids",
+          "type": "array"
+        },
+        "user_designated": {
+          "default": false,
+          "title": "User Designated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "participant_id",
+        "role"
+      ],
+      "title": "Participant",
+      "type": "object"
+    },
+    "StateInterval": {
+      "additionalProperties": false,
+      "properties": {
+        "body_part": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body Part"
+        },
+        "end_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "End Us",
+          "type": "integer"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "participant_id": {
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "start_us": {
+          "description": "원본 재생 시작 기준 정수 마이크로초",
+          "minimum": 0,
+          "title": "Start Us",
+          "type": "integer"
+        },
+        "state_category": {
+          "title": "State Category",
+          "type": "string"
+        },
+        "state_id": {
+          "title": "State Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state_id",
+        "participant_id",
+        "state_category",
+        "start_us",
+        "end_us"
+      ],
+      "title": "StateInterval",
+      "type": "object"
+    }
+  },
+  "$id": "urn:fight-review:schema:result-bundle:0.2",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "한 영상·한 분석 실행의 결과 묶음.",
+  "properties": {
+    "aggregates": {
+      "items": {
+        "$ref": "#/$defs/Aggregate"
+      },
+      "title": "Aggregates",
+      "type": "array"
+    },
+    "annotation_source": {
+      "title": "Annotation Source",
+      "type": "string"
+    },
+    "assessments": {
+      "items": {
+        "$ref": "#/$defs/Assessment"
+      },
+      "title": "Assessments",
+      "type": "array"
+    },
+    "dataset_kind": {
+      "enum": [
+        "synthetic",
+        "manual",
+        "model",
+        "unanalyzed"
+      ],
+      "title": "Dataset Kind",
+      "type": "string"
+    },
+    "definition_version": {
+      "title": "Definition Version",
+      "type": "string"
+    },
+    "duration_us": {
+      "exclusiveMinimum": 0,
+      "title": "Duration Us",
+      "type": "integer"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/Event"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "exchanges": {
+      "items": {
+        "$ref": "#/$defs/Exchange"
+      },
+      "title": "Exchanges",
+      "type": "array"
+    },
+    "expected_summary": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "회귀 검사용 기대값. 운영 결과에는 없음",
+      "title": "Expected Summary"
+    },
+    "expert_validated": {
+      "default": false,
+      "title": "Expert Validated",
+      "type": "boolean"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "interval_convention": {
+      "const": "[start,end)",
+      "title": "Interval Convention",
+      "type": "string"
+    },
+    "metric_samples": {
+      "items": {
+        "$ref": "#/$defs/MetricSample"
+      },
+      "title": "Metric Samples",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "participants": {
+      "items": {
+        "$ref": "#/$defs/Participant"
+      },
+      "title": "Participants",
+      "type": "array"
+    },
+    "relations": {
+      "items": {
+        "$ref": "#/$defs/EventRelation"
+      },
+      "title": "Relations",
+      "type": "array"
+    },
+    "scenario": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Scenario"
+    },
+    "schema_version": {
+      "pattern": "^(demo-)?\\d+\\.\\d+$",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sport": {
+      "enum": [
+        "boxing",
+        "kickboxing",
+        "muay_thai",
+        "mma"
+      ],
+      "title": "Sport",
+      "type": "string"
+    },
+    "state_intervals": {
+      "items": {
+        "$ref": "#/$defs/StateInterval"
+      },
+      "title": "State Intervals",
+      "type": "array"
+    },
+    "time_unit": {
+      "const": "us",
+      "title": "Time Unit",
+      "type": "string"
+    },
+    "video_id": {
+      "title": "Video Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "dataset_kind",
+    "annotation_source",
+    "definition_version",
+    "video_id",
+    "duration_us",
+    "sport",
+    "time_unit",
+    "interval_convention",
+    "participants"
+  ],
+  "title": "ResultBundle",
+  "type": "object"
+}

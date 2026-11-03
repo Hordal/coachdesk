@@ -1,0 +1,45 @@
+services:
+  api:
+    build: .
+    image: coachdesk:local
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8780:8000"
+    environment: &runtime
+      APP_PROFILE: production
+      AUTH_MODE: session
+      COOKIE_SECURE: "1"
+      ENABLE_FIXTURES: "0"
+      MEDIA_SECRET: ${MEDIA_SECRET:?Set a private random MEDIA_SECRET before starting}
+      DATA_DIR: /data
+      RETENTION_DAYS: ${RETENTION_DAYS:-0}
+    volumes:
+      - coach_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health',timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+  worker:
+    image: coachdesk:local
+    command: ["python", "-m", "app.jobs.worker"]
+    restart: unless-stopped
+    environment: *runtime
+    volumes:
+      - coach_data:/data
+    depends_on:
+      api:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+volumes:
+  coach_data:

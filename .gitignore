@@ -1,0 +1,55 @@
+# 가상환경, 의존성, 빌드 산출물
+.venv/
+node_modules/
+dist/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# 영상, 비밀값
+*.mp4
+*.mov
+.env
+
+# 개발용 시험 영상·관절 데이터(backend/scripts/make_demo_media.py로 생성)
+backend/dev_media/
+
+# 개발 중 저장되는 업로드·DB·재생 사본
+backend/data/
+
+# 팀 저장소 시험용 외부 복사본과 가상환경(내려받은 모델·영상 포함)
+_external/
+
+# 스크린샷 원본(tools/screenshots/capture.py로 다시 만들 수 있음)과 임시 파일
+Notion/화면_예시/원본/
+Notion/화면_예시/*.zip
+_tmp_shots/
+
+# 팀원이 올린 Notion 내보내기 원본(이 저장소의 공유 대상이 아님)
+Notion/download/
+
+# 사용자가 지시할 때만 참조하는 비공개 추정 문서
+Notion/비공개_추정/
+
+# 발표 자료(저장소 공유 대상 아님)
+발표자료/
+
+# 팀원 전달 자료(재배포 권한 검토 전, 커밋·푸시 금지)
+source/
+# 코치 운영 기록·백업·배포 비밀값
+runtime/
+backups/
+.env.*
+!.env.production.example
+
+# 운영 DB, 로그, 모델 가중치와 인증서
+*.sqlite*
+*.db
+*.db-wal
+*.db-shm
+*.log
+*.pem
+*.key
+*.task
+.media-secret
+deletion-ledger.jsonl

@@ -1,0 +1,12 @@
+**/.venv
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/data
+**/dev_media
+runtime
+work
+.git
+.env*
+Notion
+examples

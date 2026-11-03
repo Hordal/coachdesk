@@ -1,0 +1,240 @@
+{
+  "schema_version": "demo-0.2",
+  "dataset_kind": "synthetic",
+  "annotation_source": "synthetic_fixture",
+  "expert_validated": false,
+  "definition_version": "demo-unvalidated",
+  "video_id": "demo-video-01",
+  "duration_us": 540000000,
+  "sport": "kickboxing",
+  "time_unit": "us",
+  "interval_convention": "[start,end)",
+  "participants": [
+    { "participant_id": "A", "role": "USER", "user_designated": true, "body_profile": null },
+    { "participant_id": "B", "role": "OPPONENT", "user_designated": false, "body_profile": null }
+  ],
+  "metric_samples": [],
+  "events": [
+    {"schema_version": "phase1b_v1", "event_id": "E01", "event_label": "KICK_ATTEMPT", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 10000000, "end_timestamp_us": 10700000},
+    {"schema_version": "phase1b_v1", "event_id": "E02", "event_label": "PUNCH_ATTEMPT", "status": "VALID", "verified": true, "participant_id": "B", "target_participant_id": "A", "role": "OPPONENT", "synthetic": true, "start_timestamp_us": 10750000, "end_timestamp_us": 11150000},
+    {"schema_version": "phase1b_v1", "event_id": "E03", "event_label": "DIRECT_CONTACT", "status": "VALID", "verified": true, "participant_id": "B", "target_participant_id": "A", "role": "OPPONENT", "synthetic": true, "start_timestamp_us": 11020000, "end_timestamp_us": 11060000, "source_surface": "glove", "target_surface": "head"},
+    {"schema_version": "phase1b_v1", "event_id": "E04", "event_label": "KICK_ATTEMPT", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 40000000, "end_timestamp_us": 40700000},
+    {"schema_version": "phase1b_v1", "event_id": "E05", "event_label": "PUNCH_ATTEMPT", "status": "VALID", "verified": true, "participant_id": "B", "target_participant_id": "A", "role": "OPPONENT", "synthetic": true, "start_timestamp_us": 40750000, "end_timestamp_us": 41150000},
+    {"schema_version": "phase1b_v1", "event_id": "E06", "event_label": "DIRECT_CONTACT", "status": "VALID", "verified": true, "participant_id": "B", "target_participant_id": "A", "role": "OPPONENT", "synthetic": true, "start_timestamp_us": 41020000, "end_timestamp_us": 41060000, "source_surface": "glove", "target_surface": "head"},
+    {"schema_version": "phase1b_v1", "event_id": "E07", "event_label": "KICK_ATTEMPT", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 70000000, "end_timestamp_us": 70700000},
+    {"schema_version": "phase1b_v1", "event_id": "E08", "event_label": "PUNCH_ATTEMPT", "status": "VALID", "verified": true, "participant_id": "B", "target_participant_id": "A", "role": "OPPONENT", "synthetic": true, "start_timestamp_us": 70750000, "end_timestamp_us": 71150000},
+    {"schema_version": "phase1b_v1", "event_id": "E09", "event_label": "KICK_ATTEMPT", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 190000000, "end_timestamp_us": 190700000},
+    {"schema_version": "phase1b_v1", "event_id": "E10", "event_label": "KICK_ATTEMPT", "status": "VALID", "verified": true, "participant_id": "A", "target_participant_id": "B", "role": "USER", "synthetic": true, "start_timestamp_us": 370000000, "end_timestamp_us": 370700000}
+  ],
+  "relations": [
+    {
+      "relation_id": "R01",
+      "subject_event_id": "E02",
+      "relation": "counter_to",
+      "object_event_id": "E01",
+      "assessment_ref": "AS19",
+      "basis": "synthetic_assigned_relation_not_time_threshold"
+    },
+    {
+      "relation_id": "R02",
+      "subject_event_id": "E03",
+      "relation": "contact_of",
+      "object_event_id": "E02",
+      "assessment_ref": "AS22",
+      "basis": "synthetic_assigned_contact"
+    },
+    {
+      "relation_id": "R03",
+      "subject_event_id": "E05",
+      "relation": "counter_to",
+      "object_event_id": "E04",
+      "assessment_ref": "AS20",
+      "basis": "synthetic_assigned_relation_not_time_threshold"
+    },
+    {
+      "relation_id": "R04",
+      "subject_event_id": "E06",
+      "relation": "contact_of",
+      "object_event_id": "E05",
+      "assessment_ref": "AS23",
+      "basis": "synthetic_assigned_contact"
+    },
+    {
+      "relation_id": "R05",
+      "subject_event_id": "E08",
+      "relation": "counter_to",
+      "object_event_id": "E07",
+      "assessment_ref": "AS21",
+      "basis": "synthetic_assigned_relation_not_time_threshold"
+    }
+  ],
+  "assessments": [
+    { "assessment_id": "AS01", "subject_ref": "E01", "question_code": "contact_occurred", "value": "unknown", "status": "UNKNOWN", "reason_code": "occluded", "input_refs": [] },
+    { "assessment_id": "AS02", "subject_ref": "E04", "question_code": "contact_occurred", "value": "unknown", "status": "UNKNOWN", "reason_code": "not_annotated_in_fixture", "input_refs": [] },
+    { "assessment_id": "AS03", "subject_ref": "E07", "question_code": "contact_occurred", "value": "unknown", "status": "UNKNOWN", "reason_code": "not_annotated_in_fixture", "input_refs": [] },
+    { "assessment_id": "AS04", "subject_ref": "E09", "question_code": "contact_occurred", "value": "unknown", "status": "UNKNOWN", "reason_code": "not_annotated_in_fixture", "input_refs": [] },
+    { "assessment_id": "AS05", "subject_ref": "E10", "question_code": "contact_occurred", "value": "unknown", "status": "UNKNOWN", "reason_code": "not_annotated_in_fixture", "input_refs": [] },
+
+    { "assessment_id": "AS06", "subject_ref": "E01", "question_code": "counter_followed", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["R01"] },
+    { "assessment_id": "AS07", "subject_ref": "E04", "question_code": "counter_followed", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["R03"] },
+    { "assessment_id": "AS08", "subject_ref": "E07", "question_code": "counter_followed", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["R05"] },
+    { "assessment_id": "AS09", "subject_ref": "E09", "question_code": "counter_followed", "value": "absent", "status": "VALID", "reason_code": null, "input_refs": [] },
+    { "assessment_id": "AS10", "subject_ref": "E10", "question_code": "counter_followed", "value": "unknown", "status": "UNKNOWN", "reason_code": "occluded", "input_refs": [] },
+
+    { "assessment_id": "AS11", "contact_region": "head", "subject_ref": "E01", "question_code": "counter_contact", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["AS06", "AS16"] },
+    { "assessment_id": "AS12", "contact_region": "head", "subject_ref": "E04", "question_code": "counter_contact", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["AS07", "AS17"] },
+    { "assessment_id": "AS13", "subject_ref": "E07", "question_code": "counter_contact", "value": "absent", "status": "VALID", "reason_code": null, "input_refs": ["AS08", "AS18"] },
+    { "assessment_id": "AS14", "subject_ref": "E09", "question_code": "counter_contact", "value": "not_applicable", "status": "VALID", "reason_code": "no_counter", "input_refs": ["AS09"] },
+    { "assessment_id": "AS15", "subject_ref": "E10", "question_code": "counter_contact", "value": "unknown", "status": "UNKNOWN", "reason_code": "occluded", "input_refs": ["AS10"] },
+
+    { "assessment_id": "AS16", "contact_region": "head", "subject_ref": "E02", "question_code": "contact_occurred", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["R02"] },
+    { "assessment_id": "AS17", "contact_region": "head", "subject_ref": "E05", "question_code": "contact_occurred", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["R04"] },
+    { "assessment_id": "AS18", "subject_ref": "E08", "question_code": "contact_occurred", "value": "absent", "status": "VALID", "reason_code": null, "input_refs": [], "note": "접촉 없음으로 가정. 관측 조건을 충족한 absent" },
+
+    { "assessment_id": "AS19", "subject_ref": "R01", "question_code": "counter_relation", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["E01", "E02"] },
+    { "assessment_id": "AS20", "subject_ref": "R03", "question_code": "counter_relation", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["E04", "E05"] },
+    { "assessment_id": "AS21", "subject_ref": "R05", "question_code": "counter_relation", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["E07", "E08"] },
+    { "assessment_id": "AS22", "subject_ref": "R02", "question_code": "contact_attribution", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["E02", "E03"] },
+    { "assessment_id": "AS23", "subject_ref": "R04", "question_code": "contact_attribution", "value": "present", "status": "VALID", "reason_code": null, "input_refs": ["E05", "E06"] },
+
+    { "assessment_id": "AS24", "subject_ref": "X01", "question_code": "distance_condition", "value": "unknown", "status": "UNKNOWN", "reason_code": "missing_input", "input_refs": [] },
+    { "assessment_id": "AS25", "subject_ref": "X02", "question_code": "distance_condition", "value": "unknown", "status": "UNKNOWN", "reason_code": "missing_input", "input_refs": [] },
+    { "assessment_id": "AS26", "subject_ref": "X03", "question_code": "distance_condition", "value": "unknown", "status": "UNKNOWN", "reason_code": "missing_input", "input_refs": [] },
+    { "assessment_id": "AS27", "subject_ref": "X04", "question_code": "distance_condition", "value": "unknown", "status": "UNKNOWN", "reason_code": "missing_input", "input_refs": [] },
+    { "assessment_id": "AS28", "subject_ref": "X05", "question_code": "distance_condition", "value": "unknown", "status": "UNKNOWN", "reason_code": "missing_input", "input_refs": [] }
+  ],
+  "exchanges": [
+    {
+      "exchange_id": "X01",
+      "anchor_event_id": "E01",
+      "participant_ids": ["A", "B"],
+      "start_us": 9000000,
+      "end_us": 14000000,
+      "event_refs": ["E01", "E02", "E03"],
+      "relation_refs": ["R01", "R02"],
+      "evidence_refs": ["EV01"]
+    },
+    {
+      "exchange_id": "X02",
+      "anchor_event_id": "E04",
+      "participant_ids": ["A", "B"],
+      "start_us": 39000000,
+      "end_us": 44000000,
+      "event_refs": ["E04", "E05", "E06"],
+      "relation_refs": ["R03", "R04"],
+      "evidence_refs": ["EV02"]
+    },
+    {
+      "exchange_id": "X03",
+      "anchor_event_id": "E07",
+      "participant_ids": ["A", "B"],
+      "start_us": 69000000,
+      "end_us": 74000000,
+      "event_refs": ["E07", "E08"],
+      "relation_refs": ["R05"],
+      "evidence_refs": ["EV03"]
+    },
+    {
+      "exchange_id": "X04",
+      "anchor_event_id": "E09",
+      "participant_ids": ["A", "B"],
+      "start_us": 189000000,
+      "end_us": 194000000,
+      "event_refs": ["E09"],
+      "relation_refs": [],
+      "evidence_refs": ["EV04"]
+    },
+    {
+      "exchange_id": "X05",
+      "anchor_event_id": "E10",
+      "participant_ids": ["A", "B"],
+      "start_us": 369000000,
+      "end_us": 374000000,
+      "event_refs": ["E10"],
+      "relation_refs": [],
+      "evidence_refs": ["EV05"]
+    }
+  ],
+  "evidence": [
+    { "evidence_id": "EV01", "video_id": "demo-video-01", "start_us": 9000000, "end_us": 14000000, "participant_refs": ["A", "B"], "availability": "unavailable" },
+    { "evidence_id": "EV02", "video_id": "demo-video-01", "start_us": 39000000, "end_us": 44000000, "participant_refs": ["A", "B"], "availability": "unavailable" },
+    { "evidence_id": "EV03", "video_id": "demo-video-01", "start_us": 69000000, "end_us": 74000000, "participant_refs": ["A", "B"], "availability": "unavailable" },
+    { "evidence_id": "EV04", "video_id": "demo-video-01", "start_us": 189000000, "end_us": 194000000, "participant_refs": ["A", "B"], "availability": "unavailable" },
+    { "evidence_id": "EV05", "video_id": "demo-video-01", "start_us": 369000000, "end_us": 374000000, "participant_refs": ["A", "B"], "availability": "unavailable" }
+  ],
+  "aggregates": [
+    {
+      "aggregate_id": "AG01",
+      "description": "확인된 A 발차기 중 상대 반격이 이어진 비율",
+      "counting_unit": "kick_attempt",
+      "scope": { "video_id": "demo-video-01", "participant_id": "A", "interval": "whole_video" },
+      "condition_refs": [],
+      "question_code": "counter_followed",
+      "candidate_refs": ["E01", "E04", "E07", "E09", "E10"],
+      "denominator_refs": ["E01", "E04", "E07", "E09"],
+      "numerator_refs": ["E01", "E04", "E07"],
+      "unknown_refs": ["E10"],
+      "excluded_refs": [],
+      "counts": { "candidates": 5, "denominator": 4, "numerator": 3, "unknown": 1, "excluded": 0 },
+      "ratio": 0.75
+    },
+    {
+      "aggregate_id": "AG02",
+      "description": "반격이 이어진 A 발차기 중 그 반격에서 A 머리 접촉이 확인된 비율",
+      "counting_unit": "kick_attempt",
+      "scope": { "video_id": "demo-video-01", "participant_id": "A", "interval": "whole_video" },
+      "condition_refs": ["AG01.numerator_refs"],
+      "question_code": "counter_contact",
+      "contact_region_condition": "head",
+      "candidate_refs": ["E01", "E04", "E07"],
+      "denominator_refs": ["E01", "E04", "E07"],
+      "numerator_refs": ["E01", "E04"],
+      "unknown_refs": [],
+      "excluded_refs": [],
+      "counts": { "candidates": 3, "denominator": 3, "numerator": 2, "unknown": 0, "excluded": 0 },
+      "ratio": 0.6666666666666666
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F01",
+      "claim_type": "aggregate",
+      "template_id": "kick_counter_summary",
+      "input_refs": ["AG01", "AG02"],
+      "evidence_refs": ["EV01", "EV02", "EV03", "EV04", "EV05"],
+      "rule_ref": null,
+      "status": "valid",
+      "hold_reason": null
+    },
+    {
+      "finding_id": "F02",
+      "claim_type": "correction",
+      "template_id": null,
+      "input_refs": ["AG01", "AG02"],
+      "evidence_refs": [],
+      "rule_ref": null,
+      "status": "withheld",
+      "hold_reason": "insufficient_behavior_evidence_and_unvalidated_rule"
+    },
+    {
+      "finding_id": "F03",
+      "claim_type": "aggregate",
+      "template_id": null,
+      "input_refs": ["AS24", "AS25", "AS26", "AS27", "AS28"],
+      "evidence_refs": [],
+      "rule_ref": null,
+      "status": "withheld",
+      "hold_reason": "distance_unavailable"
+    }
+  ],
+  "expected_summary": {
+    "note": "회귀 검사용 기대값. 위 aggregates와 assessments에서 계산되어야 하며 별도 원자료가 아니다.",
+    "observed_kicks": 5,
+    "counter_assessable": 4,
+    "kicks_followed_by_counter": 3,
+    "kicks_with_counter_head_contact": 2,
+    "counter_without_contact": 1,
+    "no_counter": 1,
+    "unknown_followup": 1
+  }
+}

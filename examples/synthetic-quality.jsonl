@@ -1,0 +1,2 @@
+{"frame_index": 10, "timestamp_us": 333333, "arm": "left", "participant_id": "candidate:0", "role": "UNRESOLVED", "feature_ready": true, "statuses": [], "reasons": []}
+{"frame_index": 12, "timestamp_us": 400000, "participant_id": null, "feature_ready": false, "statuses": ["NO_GEOMETRIC_MATCH", "LOW_WRIST_VISIBILITY"], "reasons": ["NO_GEOMETRIC_MATCH"]}
