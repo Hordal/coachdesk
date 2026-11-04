@@ -69,4 +69,4 @@ npm run build
 
 [COACHDESK 공개 주소](https://lows-projection-mercy-ruled.trycloudflare.com) · [접속 안내](PUBLIC_URL.md)
 
-로그인이 필요하며 계정은 관리자에게 별도로 받습니다. 호스트 PC가 켜져 있는 동안만 사용하는 임시 주소이고, 터널 재시작 시 바뀔 수 있습니다.
+로그인 없이 사용할 수 있는 공개 체험 공간입니다. 등록한 영상과 기록은 다른 방문자도 볼 수 있습니다. 호스트 PC가 켜져 있는 동안만 사용하는 임시 주소이고, 터널 재시작 시 바뀔 수 있습니다.
