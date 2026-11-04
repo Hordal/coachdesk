@@ -4399,6 +4399,34 @@
         "title": "ObservationSetView",
         "type": "object"
       },
+      "ObservationSpan": {
+        "properties": {
+          "end_us": {
+            "title": "End Us",
+            "type": "integer"
+          },
+          "participant_id": {
+            "title": "Participant Id",
+            "type": "string"
+          },
+          "sample_count": {
+            "title": "Sample Count",
+            "type": "integer"
+          },
+          "start_us": {
+            "title": "Start Us",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "participant_id",
+          "start_us",
+          "end_us",
+          "sample_count"
+        ],
+        "title": "ObservationSpan",
+        "type": "object"
+      },
       "Participant-Input": {
         "additionalProperties": false,
         "properties": {
@@ -5932,6 +5960,11 @@
             "title": "Assessments",
             "type": "array"
           },
+          "derived_state_count": {
+            "default": 0,
+            "title": "Derived State Count",
+            "type": "integer"
+          },
           "events": {
             "items": {
               "$ref": "#/components/schemas/Event"
@@ -5942,6 +5975,24 @@
           "from_us": {
             "title": "From Us",
             "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/ObservationSpan"
+            },
+            "title": "Observations",
+            "type": "array"
           },
           "relations": {
             "items": {
@@ -5968,7 +6019,10 @@
           "states",
           "events",
           "relations",
-          "assessments"
+          "assessments",
+          "observations",
+          "derived_state_count",
+          "note"
         ],
         "title": "TimelineView",
         "type": "object"
@@ -8861,6 +8915,50 @@
         "summary": "Create Report",
         "tags": [
           "corrections"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/rule-analysis": {
+      "get": {
+        "operationId": "rule_analysis_api_v1_runs__run_id__rule_analysis_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Rule Analysis Api V1 Runs  Run Id  Rule Analysis Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rule Analysis",
+        "tags": [
+          "runs"
         ]
       }
     },

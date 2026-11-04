@@ -7,7 +7,7 @@ import { BODY_PART, EVENT_TYPE, label, ROLE, STATE_CATEGORY, STATE_LABEL, T } fr
 
 export interface TrackItem {
   id: string;
-  kind: "state" | "action" | "contact";
+  kind: "state" | "action" | "contact" | "observation";
   startUs: number;
   endUs: number;
   text: string;
@@ -19,6 +19,7 @@ export interface TrackRow {
   label: string;
   items: TrackItem[];
 }
+type ObservationSpan={participant_id:string;start_us:number;end_us:number;sample_count:number};
 
 export function participantName(id: string | null | undefined, participants: Participant[]): string {
   if (!id) return "";
@@ -32,10 +33,13 @@ export function buildRows(
   participants: Participant[],
   states: StateInterval[],
   events: Event[],
+  observations: ObservationSpan[] = [],
 ): TrackRow[] {
   const rows: TrackRow[] = [];
 
   for (const p of participants) {
+    const observed=observations.filter(s=>s.participant_id===p.participant_id);
+    if(observed.length) rows.push({key:`observation-${p.participant_id}`,label:`${participantName(p.participant_id,participants)} · 관절 관측`,items:observed.map(s=>({id:`obs-${p.participant_id}-${s.start_us}`,kind:"observation",startUs:s.start_us,endUs:s.end_us,text:`관절 관측 ${s.sample_count}개`}))});
     const own = states.filter((s) => s.participant_id === p.participant_id);
     const groups = new Map<string, StateInterval[]>();
     for (const s of own) {
@@ -109,23 +113,26 @@ interface Props {
   participants: Participant[];
   states: StateInterval[];
   events: Event[];
+  observations?: ObservationSpan[];
+  listInitiallyOpen?: boolean;
   /** 영상의 현재 표시 프레임 시각. 있으면 재생 위치 표시선을 그린다 */
   playheadUs?: number | null;
   /** 있으면 항목을 누를 때 이 시각으로 이동한다(영상 재생 화면). 없으면 사건 상세로 이동한다 */
   onSelect?: (startUs: number) => void;
+  onRangeSelect?: (startUs:number,endUs:number)=>void;
 }
 
-export function TimelineTrack({ runId, fromUs, toUs, participants, states, events, playheadUs, onSelect }: Props) {
-  const rows = buildRows(runId, participants, states, events);
+export function TimelineTrack({ runId, fromUs, toUs, participants, states, events, observations, listInitiallyOpen=true,playheadUs, onSelect,onRangeSelect }: Props) {
+  const rows = buildRows(runId, participants, states, events,observations);
   const allItems = rows.flatMap((r) => r.items.map((i) => ({ ...i, row: r.label })));
   allItems.sort((a, b) => a.startUs - b.startUs || a.id.localeCompare(b.id));
 
   if (rows.length === 0) {
     return (
-      <div className="notice notice--muted" role="status">
+      <div className="timeline"><div className="timeline__axis"><span>{formatTime(fromUs)}</span><span>{formatTime(toUs)}</span></div><div className="notice notice--muted" role="status">
         <p>이 구간에는 기록된 상태나 사건이 없습니다.</p>
         <p className="muted">{T.gapNotice}</p>
-      </div>
+      </div></div>
     );
   }
 
@@ -157,7 +164,7 @@ export function TimelineTrack({ runId, fromUs, toUs, participants, states, event
                 const title = `${item.text} ${formatRange(item.startUs, item.endUs)}`;
                 const className = `track__item track__item--${item.kind}`;
                 const text = <span className="track__text">{item.text}</span>;
-                if (onSelect) {
+                if (onSelect||onRangeSelect) {
                   return (
                     <button
                       key={item.id}
@@ -166,7 +173,7 @@ export function TimelineTrack({ runId, fromUs, toUs, participants, states, event
                       style={style}
                       title={`${title} · 이 시각으로 이동`}
                       aria-label={`${item.text}, ${formatRange(item.startUs, item.endUs)}, 이 시각으로 이동`}
-                      onClick={() => onSelect(item.startUs)}
+                      onClick={() => onRangeSelect ? onRangeSelect(item.startUs,item.endUs) : onSelect?.(item.startUs)}
                     >
                       {text}
                     </button>
@@ -189,7 +196,7 @@ export function TimelineTrack({ runId, fromUs, toUs, participants, states, event
 
       <p className="muted timeline__gap">{T.gapNotice}</p>
 
-      <details className="timeline__list" open>
+      <details className="timeline__list" open={listInitiallyOpen}>
         <summary>목록으로 보기</summary>
         <table>
           <thead>

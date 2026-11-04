@@ -1,12 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render,screen,waitFor } from "@testing-library/react";
+import { render,screen,waitFor,cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach,expect,it,vi } from "vitest";
 import { ObservationSummary } from "../src/components/ObservationSummary";
 import { SummaryPage } from "../src/features/findings/SummaryPage";
 import { CoachingDraft } from "../src/components/CoachingDraft";
+import userEvent from "@testing-library/user-event";
 
-afterEach(()=>vi.unstubAllGlobals());
+afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
 function show(element:React.ReactNode, response:(path:string)=>unknown) {
   vi.stubGlobal("fetch",vi.fn(async(input)=>new Response(JSON.stringify(response(String(input))),{headers:{"content-type":"application/json"}})));
   render(<QueryClientProvider client={new QueryClient({defaultOptions:{queries:{retry:false}}})}><MemoryRouter>{element}</MemoryRouter></QueryClientProvider>);
@@ -23,11 +24,15 @@ it("does not call an empty evidence list a missing original video",async()=>{
   expect(screen.queryByText(/원본 영상이 없어 재생할 수 없습니다/)).not.toBeInTheDocument();
 });
 it("shows grounded coaching scenes, practice and the real video together",async()=>{
+  vi.spyOn(HTMLMediaElement.prototype,"pause").mockImplementation(()=>{});
   show(<CoachingDraft runId="r1"/>,path=>path.endsWith("/playback")?{playable:true,access_url:"/signed-clip"}:{available:true,video_id:"v1",duration_us:5000000,participants:[],coaching:{scope:"화면 좌표 기반 초안",cards:[{id:"right-hand-height",title:"오른손 위치 확인",observation:"확인 가능한 장면에서 측정한 관찰",interpretation:"공격 동작인지 확인하세요",practice:"복귀 지연을 코치가 확인하면 연습하세요",check:"같은 각도로 다시 촬영하세요",from_us:1000000,to_us:1300000,image_us:1000000,status:"확인할 장면"}],manual_checks:[]}});
   expect(await screen.findByText("오른손 위치 확인")).toBeInTheDocument();
   expect(screen.getByText("복귀 지연을 코치가 확인하면 연습하세요")).toBeInTheDocument();
   expect(screen.getByRole("img")).toHaveAttribute("src","/api/v1/videos/v1/frame-image?time_us=1000000");
   await waitFor(()=>expect(document.querySelector("video")).toHaveAttribute("src","/signed-clip"));
+  await userEvent.click(screen.getByRole("button",{name:"오른손 위치 확인 구간 영상 재생"}));
+  expect(screen.getByLabelText("오른손 위치 확인 구간 재생")).toHaveAttribute("src","/signed-clip");
+  expect(screen.getByRole("button",{name:"이 구간 다시 보기"})).toBeInTheDocument();
 });
 it("provides a manual checklist instead of fabricating measured coaching when poses are insufficient",async()=>{
   show(<CoachingDraft runId="r1"/>,()=>({available:false,participants:[],coaching:{cards:[],scope:"측정 제한",insufficient_reason:"손목이 보이지 않습니다",manual_checks:["공격 전후 손 위치 비교"]}}));

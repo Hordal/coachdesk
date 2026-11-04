@@ -206,9 +206,11 @@ export function ScenePage() {
             participants={run.participants}
             states={timeline.data.states}
             events={timeline.data.events}
+            observations={timeline.data.observations}
             playheadUs={src !== null ? currentUs : null}
             onSelect={src !== null ? requestSeek : undefined}
           />
+          {timeline.data.note?<p className="muted">{timeline.data.note}</p>:null}
           {timeline.data.assessments.length > 0 ? (
             <section aria-labelledby="tl-assessments">
               <h3 id="tl-assessments">이 구간의 판정</h3>

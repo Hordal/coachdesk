@@ -211,3 +211,11 @@ html,body { overflow:hidden; }
 .report-shot { position:relative; }
 .report-shot__subject { position:absolute; border:2px solid #ffd400; pointer-events:none; box-sizing:border-box; }
 .report-shot__subject b { position:absolute; top:0; left:0; background:#ffd400; color:#332b00; padding:3px 5px; font-size:11px; white-space:nowrap; }
+
+.coaching-clip__poster { display:block; width:100%; padding:0; border:0; background:transparent; color:var(--accent); text-align:left; cursor:pointer; }
+.coaching-clip__poster:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+.coaching-clip video { display:block; width:100%; aspect-ratio:16/9; object-fit:contain; border-radius:8px; background:#152330; }
+.coaching-clip__controls { display:flex; flex-wrap:wrap; gap:8px; }
+.coaching-clip__seek { display:block; margin-top:12px; font-size:.85rem; }
+.coaching-clip__seek input { display:block; width:100%; margin-top:6px; }
+@media print { .coaching-clip { display:none!important; } }

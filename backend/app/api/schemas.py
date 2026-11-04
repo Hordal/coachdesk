@@ -70,6 +70,13 @@ class AggregateDetail(ApiModel):
     )
 
 
+class ObservationSpan(ApiModel):
+    participant_id: str
+    start_us: int
+    end_us: int
+    sample_count: int
+
+
 class TimelineView(ApiModel):
     from_us: int
     to_us: int
@@ -77,6 +84,9 @@ class TimelineView(ApiModel):
     events: list[Event]
     relations: list[EventRelation]
     assessments: list[Assessment]
+    observations: list[ObservationSpan] = Field(default_factory=list)
+    derived_state_count: int = 0
+    note: str | None = None
 
 
 class EventDetail(ApiModel):

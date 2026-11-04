@@ -742,6 +742,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/runs/{run_id}/rule-analysis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Rule Analysis */
+        get: operations["rule_analysis_api_v1_runs__run_id__rule_analysis_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/runs/{run_id}/timeline": {
         parameters: {
             query?: never;
@@ -2989,6 +3006,17 @@ export interface components {
             /** Warnings */
             warnings: string[];
         };
+        /** ObservationSpan */
+        ObservationSpan: {
+            /** End Us */
+            end_us: number;
+            /** Participant Id */
+            participant_id: string;
+            /** Sample Count */
+            sample_count: number;
+            /** Start Us */
+            start_us: number;
+        };
         /** Participant */
         "Participant-Input": {
             body_profile?: components["schemas"]["BodyProfile-Input"] | null;
@@ -3529,10 +3557,19 @@ export interface components {
         TimelineView: {
             /** Assessments */
             assessments: components["schemas"]["Assessment-Output"][];
+            /**
+             * Derived State Count
+             * @default 0
+             */
+            derived_state_count: number;
             /** Events */
             events: components["schemas"]["Event"][];
             /** From Us */
             from_us: number;
+            /** Note */
+            note: string | null;
+            /** Observations */
+            observations: components["schemas"]["ObservationSpan"][];
             /** Relations */
             relations: components["schemas"]["EventRelation-Output"][];
             /** States */
@@ -5234,6 +5271,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReportView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rule_analysis_api_v1_runs__run_id__rule_analysis_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */

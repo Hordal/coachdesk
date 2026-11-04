@@ -27,6 +27,15 @@ from ..schemas import (
 router = APIRouter(prefix="/runs", tags=["runs"])
 
 
+@router.get("/{run_id}/rule-analysis")
+def rule_analysis(request: Request, run: StoredRun = Depends(owned_run), media: MediaStore = Depends(get_media)) -> dict:
+    from ...services.analysis_bridge import analyze_rules
+    view = get_poses(request=request, run=run, media=media, from_us=0, to_us=None)
+    return {"run_id": run.run_id, "video_id": run.bundle.video_id,
+            "participants": [{"participant_id": p.participant_id, "role": str(p.role)} for p in run.bundle.participants],
+            **analyze_rules(view, run.bundle)}
+
+
 def summarize(run: StoredRun, store: RunStore, videos: VideoRepo) -> RunSummary:
     b = run.bundle
     video = videos.get(b.video_id)
@@ -128,7 +137,9 @@ def get_aggregate(aggregate_id: str, run: StoredRun = Depends(owned_run)) -> Agg
 
 @router.get("/{run_id}/timeline", response_model=TimelineView)
 def get_timeline(
+    request: Request,
     run: StoredRun = Depends(owned_run),
+    media: MediaStore = Depends(get_media),
     from_us: int = Query(0, ge=0),
     to_us: int | None = Query(None, gt=0),
 ) -> TimelineView:
@@ -144,13 +155,29 @@ def get_timeline(
     event_ids = {e.event_id for e in events}
     relations = [r for r in b.relations if r.subject_event_id in event_ids or r.object_event_id in event_ids]
     subject_ids = event_ids | {r.relation_id for r in relations}
+    states = list(b.state_intervals)
+    observations = []
+    derived_count = 0
+    if b.dataset_kind == "model":
+        from ...services.analysis_bridge import analyze_rules, observation_spans
+        from ...domain.models import StateInterval
+        view = get_poses(request=request, run=run, media=media, from_us=0, to_us=None)
+        observations = [s for s in observation_spans(view,b.duration_us) if overlaps(s["start_us"],s["end_us"])]
+        recorded = {(s.participant_id,s.body_part,s.state_category) for s in states}
+        derived = [StateInterval.model_validate(s) for s in analyze_rules(view,b)["states"]
+                   if (s["participant_id"],s["body_part"],s["state_category"]) not in recorded and overlaps(s["start_us"],s["end_us"])]
+        states.extend(derived)
+        derived_count = len(derived)
     return TimelineView(
         from_us=from_us,
         to_us=end,
-        states=[s for s in b.state_intervals if overlaps(s.start_us, s.end_us)],
+        states=[s for s in states if overlaps(s.start_us, s.end_us)],
         events=events,
         relations=relations,
         assessments=[a for a in b.assessments if a.subject_ref in subject_ids],
+        observations=observations,
+        derived_state_count=derived_count,
+        note="관절 관측은 동작·명중 판정이 아닙니다. 보조 가드 규칙을 연결하며, 관측 공백은 채우지 않습니다." if b.dataset_kind == "model" else None,
     )
 
 

@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { CoachingClip } from "./CoachingClip";
 import { useObservationStats } from "./ObservationSummary";
 import { usePlayback } from "../api/hooks";
 import { formatTime } from "../lib/format";
 import { ProblemNotice } from "./ProblemNotice";
 
 export function CoachingDraft({runId}:{runId:string}) {
+  const [activeClip,setActiveClip]=useState<string|null>(null);
   const stats=useObservationStats(runId);
   const s=stats.data;
   const playback=usePlayback(s?.video_id ?? "",!!s?.video_id,240000);
@@ -18,7 +21,7 @@ export function CoachingDraft({runId}:{runId:string}) {
     </section>
     {draft?.observed_window ? <section className="workspace-panel panel-pad" aria-label="분석에 사용된 구간"><h2>분석에 사용된 구간</h2><p>{draft.observed_window.first_us===null?"선택한 선수의 관측이 없습니다.":`${formatTime(draft.observed_window.first_us)}–${formatTime(draft.observed_window.last_us ?? draft.observed_window.first_us)} · ${draft.observed_window.sample_count}개 관측`}</p><p className="muted">이 구간 사이에도 관측 공백이 있을 수 있습니다. 영상 전체와 범위가 크게 다르면 선수 지정에서 뒤쪽 장면의 같은 선수 번호를 추가로 연결하세요.</p><Link to={`/videos/${s.video_id}/observations`}>선수 지정·추적 끊김 확인 →</Link></section>:null}<section aria-label="장면별 코칭"><h2>관찰한 장면과 연습 제안</h2>
       {draft?.cards.map((card,i)=><article className="coaching-card" key={card.id}>
-        <div className="coaching-card__image"><Link to={`/runs/${runId}/scene?from_us=${card.from_us}&to_us=${Math.min(s.duration_us,Math.max(card.to_us,card.from_us+2_000_000))}`}><div className="report-shot"><img src={`/api/v1/videos/${s.video_id}/frame-image?time_us=${card.image_us}`} alt={`${formatTime(card.image_us)} 분석 선수의 ${card.title} 확인 장면`} loading="lazy"/>{card.subject_box ? <div className="report-shot__subject" style={{left:`${card.subject_box.left}%`,top:`${card.subject_box.top}%`,width:`${card.subject_box.width}%`,height:`${card.subject_box.height}%`}}><b>분석 선수</b></div>:null}</div><span>{formatTime(card.from_us)}–{formatTime(card.to_us)} · 영상에서 확인 →</span></Link></div>
+        <div className="coaching-card__image">{activeClip===card.id&&playback.data?.playable&&playback.data.access_url?<CoachingClip key={`${card.id}-${playback.data.access_url}`} src={playback.data.access_url} fromUs={card.from_us} toUs={Math.min(s.duration_us,card.to_us)} label={card.title} onClose={()=>setActiveClip(null)} onSourceError={()=>void playback.refetch()}/>:<><button type="button" className="coaching-clip__poster" aria-label={`${card.title} 구간 영상 재생`} onClick={()=>setActiveClip(card.id)}><div className="report-shot"><img src={`/api/v1/videos/${s.video_id}/frame-image?time_us=${card.image_us}`} alt={`${formatTime(card.image_us)} 분석 선수의 ${card.title} 확인 장면`} loading="lazy"/>{card.subject_box ? <div className="report-shot__subject" style={{left:`${card.subject_box.left}%`,top:`${card.subject_box.top}%`,width:`${card.subject_box.width}%`,height:`${card.subject_box.height}%`}}><b>분석 선수</b></div>:null}</div><span>▶ {formatTime(card.from_us)}–{formatTime(card.to_us)} · 여기서 구간 재생</span></button>{activeClip===card.id?<p role="status">{playback.isPending?"영상을 불러오고 있습니다…":"현재 영상을 재생할 수 없습니다. 영상 보관 상태를 확인해 주세요."}</p>:null}{activeClip===card.id&&playback.error?<ProblemNotice error={playback.error} onRetry={()=>void playback.refetch()}/>:null}</>}</div>
         <div><p className="overline">확인 과제 {i+1} · {card.status}</p><h3>{card.title}</h3><dl className="coaching-detail"><dt>관찰</dt><dd>{card.observation}</dd><dt>측정 기준</dt><dd>{card.measurement_note ?? "어깨·골반·손목을 이용한 화면상 위치 비교입니다."}</dd><dt>확인할 점</dt><dd>{card.interpretation}</dd><dt>연습 제안</dt><dd>{card.practice}</dd><dt>다음 촬영에서 확인</dt><dd>{card.check}</dd></dl></div>
       </article>)}
       {!draft?.cards.length ? <><p>{draft?.insufficient_reason ?? "자세를 평가할 관측이 부족합니다."}</p><h3>영상에서 직접 확인할 항목</h3><ul>{(draft?.manual_checks ?? ["공격 전후 손 위치 비교","동작 후 준비 자세 확인"]).map(t=><li key={t}>{t}</li>)}</ul></> : null}

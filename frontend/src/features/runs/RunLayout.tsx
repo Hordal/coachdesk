@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useParams, useLocation } from "react-router-dom";
+import { Link, NavLink, Navigate, Outlet, useParams, useLocation } from "react-router-dom";
 
 import { useRun } from "../../api/hooks";
 import { Loading, ProblemNotice } from "../../components/ProblemNotice";
@@ -8,7 +8,8 @@ import { label, ROLE, RUN_STATUS, SPORT, T } from "../../strings/ko";
 
 export function RunLayout() {
   const { runId = "" } = useParams();
-  const isReport = useLocation().pathname.endsWith("/report");
+  const location = useLocation();
+  const isReport = location.pathname.endsWith("/report");
   const { data: run, error, isPending, refetch } = useRun(runId);
 
   if (isPending) return <Loading />;
@@ -23,6 +24,10 @@ export function RunLayout() {
     );
   }
 
+  const hasCoaching = run.dataset_kind !== "synthetic" && run.dataset_kind !== "unanalyzed";
+  if(hasCoaching && location.pathname.replace(/\/$/, "") === `/runs/${runId}`) {
+    return <Navigate to={`/runs/${runId}/report${location.search}`} replace/>;
+  }
   return (
     <>
       <p className="breadcrumb">
@@ -66,12 +71,13 @@ export function RunLayout() {
 
       </div>
       <nav className="tabs" aria-label="결과 화면">
-        {run.dataset_kind !== "synthetic" && run.dataset_kind !== "unanalyzed" ? <><NavLink to={`/runs/${runId}/review`}>코칭 검수</NavLink><NavLink to={`/runs/${runId}/report`}>코칭 보고서</NavLink></> : null}
-        <NavLink to={`/runs/${runId}`} end>
+        {hasCoaching ? <NavLink to={`/runs/${runId}/report`}>코칭 보고서</NavLink> : null}
+        <NavLink to={hasCoaching ? `/runs/${runId}/summary` : `/runs/${runId}`} end>
           {T.tabs.summary}
         </NavLink>
         <NavLink to={`/runs/${runId}/scene`}>{T.tabs.scene}</NavLink>
         <NavLink to={`/runs/${runId}/corrections`}>{T.tabs.corrections}</NavLink>
+        {hasCoaching ? <NavLink to={`/runs/${runId}/review`}>코칭 검수</NavLink> : null}
       </nav>
 
       <Outlet context={run} />

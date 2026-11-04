@@ -186,6 +186,6 @@ describe("코치 라이브러리", () => {
     mockFetch(() => ok({ ...page, items: [item], total: 1, counts: { ...page.counts, total: 1, pending: 1 } }));
     renderAt("/");
     expect(await screen.findByRole("link", { name: "오전 스파링" })).toHaveAttribute("href", "/videos/v1");
-    expect(screen.getByRole("link", { name: "장면 검토 →" })).toHaveAttribute("href", "/runs/r1/review");
+    expect(screen.getByRole("link", { name: "코칭 보고서 →" })).toHaveAttribute("href", "/runs/r1/report");
   });
 });

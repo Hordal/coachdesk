@@ -72,6 +72,12 @@ def _valid(mark: Optional[PoseLandmark], params: StateParams) -> bool:
         return False
     if mark.x_px is None or mark.y_px is None:
         return False
+    if not math.isfinite(mark.x_px) or not math.isfinite(mark.y_px):
+        return False
+    if mark.state is not None and mark.state != "VALID":
+        return False
+    if mark.presence is not None and (not math.isfinite(mark.presence) or mark.presence < params.min_visibility):
+        return False
     return mark.visibility is not None and mark.visibility >= params.min_visibility
 
 
@@ -93,6 +99,9 @@ def compute_features(row: PoseObservationRecord, params: StateParams, opponent_d
     """포즈 한 줄의 가드·스탠스 Feature. opponent_dir은 상대가 화면 오른쪽(+1)·왼쪽(-1)에 있는지이며 없으면 앞/뒤 의존 Feature는 결측이다."""
     marks = row.landmarks or {}
     empty = SideFeatures(missing=("pose",))
+    reasons = row.model_extra.get("reasons", []) if row.model_extra else []
+    if row.status in {"REJECTED", "NOT_RUN", "IDENTITY_UNRESOLVED"} or any("CONTAMINATION" in str(r) or "IDENTITY" in str(r) for r in reasons):
+        return FrameFeatures(row.timestamp_us, row.frame_index, None, empty, empty, None, unusable="pose_rejected")
     if not marks:
         return FrameFeatures(row.timestamp_us, row.frame_index, None, empty, empty, None, unusable="no_pose")
     need = ("nose", "left_shoulder", "right_shoulder", "left_hip", "right_hip")

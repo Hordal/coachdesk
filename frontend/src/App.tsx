@@ -1,4 +1,5 @@
-import { AnalysisSettingsPage, TeamPage } from "./features/workspace/Workflow";
+import { TeamPage } from "./features/workspace/Workflow";
+import { AnalysisCenterPage } from "./features/workspace/AnalysisCenter";
 import { Route, Routes } from "react-router-dom";
 
 import { Layout } from "./components/Layout";
@@ -29,7 +30,7 @@ export function App() {
           <Route path="athletes" element={<RosterPage />} />
           <Route path="review-queue" element={<CoachHome reviewOnly />} />
           <Route path="team" element={<TeamPage />} />
-          <Route path="analysis" element={<AnalysisSettingsPage />} />
+          <Route path="analysis" element={<AnalysisCenterPage />} />
           <Route path="research" element={<ResearchLibraryPage />} />
           <Route path="operations" element={<OperationsPage />} />
           <Route path="upload" element={<UploadPage />} />
@@ -41,6 +42,7 @@ export function App() {
           <Route path="videos/:videoId/observations" element={<ObservationsPage />} />
           <Route path="runs/:runId" element={<RunLayout />}>
             <Route index element={<SummaryPage />} />
+            <Route path="summary" element={<SummaryPage />} />
             <Route path="scene" element={<ScenePage />} />
             <Route path="corrections" element={<CorrectionsPage />} />
             <Route path="review" element={<CoachReviewPage />} />

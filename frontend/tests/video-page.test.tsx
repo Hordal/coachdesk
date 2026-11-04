@@ -101,7 +101,7 @@ describe("영상 준비 화면", () => {
     );
     expect(await screen.findByRole("heading", {name:"분석과 검수"})).toBeInTheDocument();
     expect(screen.getByRole("button", {name:"동작 분석 요청"})).toBeDisabled();
-    expect(screen.getByRole("link", { name: "영상·분석 결과 열기" })).toHaveAttribute("href", "/runs/run-1/scene");
+    expect(screen.getByRole("link", { name: "코칭 보고서 열기" })).toHaveAttribute("href", "/runs/run-1/report");
     expect(screen.queryByRole("button", { name: "처리 취소" })).toBeNull();
   });
 });
