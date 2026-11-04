@@ -64,3 +64,9 @@ npm run build
 ```
 
 설계와 데이터 계약은 [참조 프로젝트](https://github.com/JulidochromisRegani/MMA-Coach-Agent-SoftWare)를 참고했습니다. 이 저장소는 별도로 개발한 COACHDESK 소스이며, 원본 GitHub·Notion에는 변경을 하지 않았습니다. `Notion/02A_*.json` 등의 가상 예제는 계약 시험에 사용합니다. 운영 데이터는 `runtime/`에 생성되며 Git에서 제외합니다.
+
+## 공개 테스트 접속
+
+[COACHDESK 공개 주소](https://lows-projection-mercy-ruled.trycloudflare.com) · [접속 안내](PUBLIC_URL.md)
+
+로그인이 필요하며 계정은 관리자에게 별도로 받습니다. 호스트 PC가 켜져 있는 동안만 사용하는 임시 주소이고, 터널 재시작 시 바뀔 수 있습니다.
