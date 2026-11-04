@@ -335,3 +335,18 @@ def test_cli_creates_an_admin_from_stdin(tmp_path, monkeypatch, capsys):
     assert cli.main(["create-admin", "--email", "root@example.com", "--password-stdin"]) == 1  # 이미 있는 이메일
     monkeypatch.setattr("sys.stdin", io.StringIO("short\n"))
     assert cli.main(["create-admin", "--email", "other@example.com", "--password-stdin"]) == 1
+
+
+def test_public_demo_allows_anonymous_use_but_hides_account_and_key_management(tmp_path):
+    app = create_app(Settings(data_dir=tmp_path/"public-demo", enable_fixtures=False, auth_mode="dev", public_demo=True))
+    client = TestClient(app)
+    me = client.get("/api/v1/me")
+    assert me.status_code == 200
+    assert me.json()["role"] == "participant"
+    assert me.json()["user_id"] == "public-demo"
+    assert client.get("/api/v1/workspace/sessions").json()["total"] == 0
+    for path in ["/api/v1/admin/users", "/api/v1/analysis/keys", "/api/v1/auth/invites/anything"]:
+        assert client.get(path).status_code == 403
+    assert client.post("/api/v1/analysis/keys", json={"label":"forbidden"}).status_code == 403
+    client.cookies.set("workspace_team", "old-private-team")
+    assert client.get("/api/v1/teams").status_code == 200

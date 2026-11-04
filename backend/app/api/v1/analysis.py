@@ -28,12 +28,21 @@ LEASE_SECONDS = 120
 @router.get("/analysis/local-status")
 def local_status(request: Request, user: User = Depends(current_user)) -> dict:
     from ...services.local_model import installed, MODEL_NAME, ENGINE_VERSION
+    from ...services.sample_video import sample_ready
     with request.app.state.db.tx() as conn:
         active=conn.execute("SELECT COUNT(*) FROM local_engine_presence WHERE seen_at>?",(time.time()-45,)).fetchone()[0]
     ready=installed()
     return {"installed":ready,"running":bool(active),"name":MODEL_NAME,"version":ENGINE_VERSION,
             "supports":["person_tracks","pose_33","punch_candidates"],"trained_action_classifier":False,
-            "available":ready and bool(active)}
+            "available":ready and bool(active), "sample_ready":sample_ready()}
+
+
+@router.get("/analysis/sample-video")
+def download_sample(user: User = Depends(current_user)):
+    from ...services.sample_video import sample_path, sample_ready
+    if not sample_ready():
+        raise ProblemError(404, "sample_not_ready", "테스트 영상을 준비해 주세요. setup_analysis.py를 실행하면 받을 수 있습니다")
+    return FileResponse(sample_path(), media_type="video/mp4", filename="coachdesk-shadow-boxing.mp4")
 
 
 @router.post("/analysis/tasks/{task_id}/use-local")

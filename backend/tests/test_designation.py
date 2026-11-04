@@ -132,6 +132,35 @@ def test_too_few_candidates_cannot_be_designated(env):
     assert put(client, set_id, [1], [2]).json()["code"] == "insufficient_candidates"
 
 
+def test_solo_training_accepts_one_person_and_remains_idempotent(env):
+    app, client, _, _, table = env
+    payload = make_payload(table)
+    for frame in payload["tracks"]:
+        frame["tracks"] = [t for t in frame["tracks"] if t["track_id"] == 1]
+    set_id = post(client, payload).json()["set_id"]
+    request = {"set_id": set_id, "user_track_ids": [1], "opponent_track_ids": [], "mode": "solo"}
+    url = f"/api/v1/videos/{VIDEO}/designation"
+    response = client.put(url, json=request)
+    assert response.status_code == 200, response.text
+    assert response.json()["assignments"] == [{"participant_id": "A", "role": "USER", "track_ids": [1]}]
+    assert client.put(url, json=request).json() == response.json()
+    with app.state.db.tx() as conn:
+        assert conn.execute("SELECT COUNT(*) FROM designations").fetchone()[0] == 1
+    assert client.put(url, json={**request, "user_track_ids": []}).status_code == 422
+    assert client.put(url, json={**request, "user_track_ids": [99]}).json()["code"] == "unknown_track"
+    assert client.put(url, json={**request, "opponent_track_ids": [1]}).json()["code"] == "solo_has_opponent"
+
+
+def test_switching_solo_and_sparring_does_not_index_missing_opponent(imported):
+    _, client, set_id = imported
+    url = f"/api/v1/videos/{VIDEO}/designation"
+    solo = {"set_id": set_id, "user_track_ids": [1], "opponent_track_ids": [], "mode": "solo"}
+    assert client.put(url, json=solo).status_code == 200
+    assert put(client, set_id, [1], [2]).status_code == 200
+    assert client.put(url, json=solo).status_code == 200
+    assert len(client.get(url).json()["assignments"]) == 1
+
+
 def test_other_users_and_missing_results_get_not_found(imported, env):
     app, client, set_id = imported
     app.dependency_overrides[current_user] = lambda: User(user_id="other-user")

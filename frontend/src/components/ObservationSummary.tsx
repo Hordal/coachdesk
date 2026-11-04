@@ -9,9 +9,9 @@ export type ObservationStats = {
   suggested_time_us: number | null;
   participants: {participant_id: string; role: string; frame_count: number; first_us: number | null; last_us: number | null}[];
   video_id?: string;
-  coaching?: {kind:string; scope:string; insufficient_reason:string|null; manual_checks:string[]; method:string; cards: CoachingCard[]};
+  coaching?: {kind:string; scope:string; insufficient_reason:string|null; manual_checks:string[]; method:string; cards: CoachingCard[]; observed_window?:{first_us:number|null;last_us:number|null;sample_count:number}};
 };
-export type CoachingCard = {id:string;title:string;observation:string;interpretation:string;practice:string;check:string;from_us:number;to_us:number;image_us:number;eligible_samples:number;measured_percent:number;status:string;subject_box?:{left:number;top:number;width:number;height:number}|null};
+export type CoachingCard = {id:string;title:string;observation:string;interpretation:string;practice:string;check:string;from_us:number;to_us:number;image_us:number;eligible_samples:number;measured_percent:number;status:string;measurement_note?:string;subject_box?:{left:number;top:number;width:number;height:number}|null};
 export const useObservationStats = (runId:string) => useQuery({queryKey:["observation-summary",runId],queryFn:()=>apiRequest<ObservationStats>(`/runs/${runId}/observation-summary`)});
 
 export function ObservationSummary({runId}: {runId: string}) {

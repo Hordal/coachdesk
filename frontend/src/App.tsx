@@ -16,6 +16,7 @@ import { CoachHome, CoachReportPage, CoachReviewPage, OperationsPage, RosterPage
 import { ScenePage } from "./features/scene/ScenePage";
 import { UploadPage } from "./features/upload/UploadPage";
 import { VideoPage } from "./features/video/VideoPage";
+import { ResearchLibraryPage } from "./features/research/ResearchLibrary";
 
 export function App() {
   return (
@@ -29,6 +30,7 @@ export function App() {
           <Route path="review-queue" element={<CoachHome reviewOnly />} />
           <Route path="team" element={<TeamPage />} />
           <Route path="analysis" element={<AnalysisSettingsPage />} />
+          <Route path="research" element={<ResearchLibraryPage />} />
           <Route path="operations" element={<OperationsPage />} />
           <Route path="upload" element={<UploadPage />} />
           <Route path="data-guide" element={<DataGuidePage />} />

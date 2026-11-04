@@ -29,6 +29,7 @@ export function DesignationPanel({ videoId, set }: { videoId: string; set: Obser
   const [picked, setPicked] = useState<Record<number, Choice>>({});
   const [activeRole, setActiveRole] = useState<"user" | "opponent">("user");
   const [frameIndex, setFrameIndex] = useState(0);
+  const [soloChoice, setSoloChoice] = useState<boolean | null>(null);
   const [selectionError, setSelectionError] = useState<string | null>(null);
 
   if (frames.isPending || current.isPending) return <Loading />;
@@ -44,10 +45,12 @@ export function DesignationPanel({ videoId, set }: { videoId: string; set: Obser
   const ids = (choice: Choice) => set.tracks.map((t) => t.track_id).filter((id) => choiceOf(id) === choice);
   const user = ids("user");
   const opponent = ids("opponent");
-  const dirty = Object.keys(picked).length > 0;
-  const insufficient = frames.data.candidate_state === "INSUFFICIENT";
+  const savedSolo = assigned && saved("OPPONENT").length === 0;
+  const solo = soloChoice ?? savedSolo;
+  const dirty = Object.keys(picked).length > 0 || (soloChoice !== null && soloChoice !== savedSolo);
+  const insufficient = solo ? set.tracks.length < 1 || frames.data.frames.length === 0 : frames.data.candidate_state === "INSUFFICIENT";
   const selectedFrame = frames.data.frames[Math.min(frameIndex, frames.data.frames.length - 1)];
-  const ready = user.length > 0 && opponent.length > 0;
+  const ready = user.length > 0 && (solo || opponent.length > 0);
 
   function pickPerson(trackId: number) {
     const other = activeRole === "user" ? "opponent" : "user";
@@ -61,7 +64,7 @@ export function DesignationPanel({ videoId, set }: { videoId: string; set: Obser
     setPicked(next);
     save.reset();
     setSelectionError(null);
-    if (activeRole === "user") setActiveRole("opponent");
+    if (activeRole === "user" && !solo) setActiveRole("opponent");
   }
 
   function swap() {
@@ -74,23 +77,24 @@ export function DesignationPanel({ videoId, set }: { videoId: string; set: Obser
 
   return (
     <section className="card person-picker" aria-labelledby="designation-title">
-      <h2 id="designation-title">사진에서 두 선수를 골라 주세요</h2>
-      <p>아래 사진의 <strong>사람을 둘러싼 상자</strong>를 누르세요. 먼저 분석할 선수, 다음으로 상대를 고릅니다. 번호를 외울 필요는 없습니다.</p>
+      <h2 id="designation-title">{solo ? "사진에서 분석할 선수를 골라 주세요" : "사진에서 두 선수를 골라 주세요"}</h2>
+      <label>영상 유형 <select aria-label="영상 유형" value={solo ? "solo" : "sparring"} onChange={e => { setSoloChoice(e.target.value === "solo"); setPicked(Object.fromEntries(set.tracks.map(t => [t.track_id, "none" as Choice]))); setActiveRole("user"); setSelectionError(null); save.reset(); }}><option value="sparring">스파링 · 두 선수</option><option value="solo">개인 훈련 · 한 선수</option></select></label>
+      <p>아래 사진의 <strong>사람을 둘러싼 상자</strong>를 누르세요. {solo ? "분석할 선수 한 명만 고르면 됩니다." : "먼저 분석할 선수, 다음으로 상대를 고릅니다."} 번호를 외울 필요는 없습니다.</p>
       <div className="person-picker__steps" aria-label="선수 선택 순서">
         <button type="button" aria-pressed={activeRole === "user"} onClick={() => setActiveRole("user")}><strong>1. 분석할 선수</strong><span>{user.length ? `선택됨 · 번호 ${user.join(", ")}` : "아직 선택하지 않았어요"}</span></button>
-        <button type="button" aria-pressed={activeRole === "opponent"} onClick={() => setActiveRole("opponent")}><strong>2. 상대 선수</strong><span>{opponent.length ? `선택됨 · 번호 ${opponent.join(", ")}` : "아직 선택하지 않았어요"}</span></button>
+        {!solo ? <button type="button" aria-pressed={activeRole === "opponent"} onClick={() => setActiveRole("opponent")}><strong>2. 상대 선수</strong><span>{opponent.length ? `선택됨 · 번호 ${opponent.join(", ")}` : "아직 선택하지 않았어요"}</span></button> : null}
       </div>
-      <p className="person-picker__instruction" role="status">{ready ? "두 선수를 골랐습니다. 사진의 색 표시를 확인하고 아래에서 저장하세요. 바꾸려면 위에서 역할을 고른 뒤 다른 사람을 누르세요." : activeRole === "user" ? "① 분석하고 싶은 선수의 상자를 누르세요." : "② 분석 선수와 맞서는 상대의 상자를 누르세요."}</p>
+      <p className="person-picker__instruction" role="status">{ready ? "선수를 골랐습니다. 사진의 색 표시를 확인하고 아래에서 저장하세요. 바꾸려면 위에서 역할을 고른 뒤 다른 사람을 누르세요." : activeRole === "user" ? "① 분석하고 싶은 선수의 상자를 누르세요." : "② 분석 선수와 맞서는 상대의 상자를 누르세요."}</p>
       {insufficient ? (
-        <p className="notice notice--error" role="alert">후보 트랙이 두 개 미만이라 선수를 지정할 수 없습니다.</p>
+        <p className="notice notice--error" role="alert">{solo ? "분석할 후보가 없습니다. 검출·추적을 다시 요청해 주세요." : "후보 트랙이 두 개 미만입니다. 혼자 나온 영상이면 개인 훈련으로 변경하세요."}</p>
       ) : null}
-      {frames.data.frames.length > 0 && !frames.data.frames.some((f) => f.separated) ? (
+      {!solo && frames.data.frames.length > 0 && !frames.data.frames.some((f) => f.separated) ? (
         <p className="notice notice--hold" role="note">두 후보가 서로 떨어져 보이는 프레임이 없어 겹친 장면을 보여 줍니다. 상자 번호를 잘 확인해 주세요.</p>
       ) : null}
 
       <div className="person-picker__actions">
-        <p>{!user.length ? "다음 할 일: 사진에서 분석할 선수를 선택하세요." : !opponent.length ? "다음 할 일: 사진에서 상대 선수를 선택하세요." : assigned && !dirty ? "선수 선택이 저장되어 있습니다. 동작 분석 단계로 이동하세요." : "다음 할 일: 선택을 저장하고 동작 분석 단계로 이동하세요."}</p>
-        <button type="button" disabled={insufficient || !ready || (assigned && !dirty) || save.isPending} onClick={() => save.mutate({set_id:set.set_id,user_track_ids:user,opponent_track_ids:opponent},{onSuccess:()=>setPicked({})})}>{save.isPending ? "선수 선택 저장 중…" : "선택 저장"}</button>
+        <p>{!user.length ? "다음 할 일: 사진에서 분석할 선수를 선택하세요." : !solo && !opponent.length ? "다음 할 일: 사진에서 상대 선수를 선택하세요." : assigned && !dirty ? "선수 선택이 저장되어 있습니다. 동작 분석 단계로 이동하세요." : "다음 할 일: 선택을 저장하고 동작 분석 단계로 이동하세요."}</p>
+        <button type="button" disabled={insufficient || !ready || (assigned && !dirty) || save.isPending} onClick={() => save.mutate({set_id:set.set_id,user_track_ids:user,opponent_track_ids:solo ? [] : opponent,mode:solo ? "solo" : "sparring"},{onSuccess:()=>setPicked({})})}>{save.isPending ? "선수 선택 저장 중…" : "선택 저장"}</button>
         {assigned && !dirty ? <Link className="action-link" to={`/videos/${videoId}`}>다음: 동작 분석 →</Link> : null}
       </div>
 
@@ -135,7 +139,7 @@ export function DesignationPanel({ videoId, set }: { videoId: string; set: Obser
                 >
                   <option value="none">지정 안 함</option>
                   <option value="user">분석 선수</option>
-                  <option value="opponent">상대</option>
+                  {!solo ? <option value="opponent">상대</option> : null}
                 </select>
               </td>
             </tr>
@@ -144,18 +148,18 @@ export function DesignationPanel({ videoId, set }: { videoId: string; set: Obser
       </table>
 
       <p>
-        <button type="button" onClick={swap} disabled={insufficient || (user.length === 0 && opponent.length === 0)}>
+        <button type="button" onClick={swap} disabled={solo || insufficient || (user.length === 0 && opponent.length === 0)}>
           분석 선수와 상대 바꾸기
         </button>{" "}
       </p>
-      {user.length === 0 || opponent.length === 0 ? <p className="muted">분석 선수와 상대의 트랙을 하나 이상씩 골라야 확정할 수 있습니다.</p> : null}
+      {user.length === 0 || (!solo && opponent.length === 0) ? <p className="muted">분석 선수와 상대의 트랙을 하나 이상씩 골라야 확정할 수 있습니다.</p> : null}
       </details>
       {messageOf(save.error) ? (
         <p className="notice notice--error" role="alert">{messageOf(save.error)}</p>
       ) : null}
       {assigned ? (
         <p className="notice notice--muted" role="status">
-          저장된 선택: 분석 선수 = 번호 {saved("USER").join(", ")} · 상대 = 번호 {saved("OPPONENT").join(", ")}. 이전 선택은 이력으로 남습니다.
+          저장된 선택: 분석 선수 = 번호 {saved("USER").join(", ")} · 상대 = {saved("OPPONENT").length ? `번호 ${saved("OPPONENT").join(", ")}` : "없음 · 개인 훈련"}. 이전 선택은 이력으로 남습니다.
         </p>
       ) : null}
     </section>

@@ -196,16 +196,17 @@ def put_designation(
     found = _latest_or_404(video_id, user, videos, repo)
     if body.set_id != found.set_id:
         raise ProblemError(409, "stale_observations", "그 사이 검출·추적 결과가 바뀌었음. 화면을 새로 고쳐 다시 선택해야 함", None, latest_set_id=found.set_id)
-    if found.track_count < 2:
+    if found.track_count < (1 if body.mode == "solo" else 2):
         raise ProblemError(409, "insufficient_candidates", "후보 트랙이 두 개 미만이라 선수를 지정할 수 없음")
     try:
-        check_selection(repo.load_tracks(video_id, found.set_id), {t.track_id for t in found.tracks}, body.user_track_ids, body.opponent_track_ids)
+        check_selection(repo.load_tracks(video_id, found.set_id), {t.track_id for t in found.tracks}, body.user_track_ids, body.opponent_track_ids, solo=body.mode == "solo")
     except DesignationError as exc:
         raise ProblemError(exc.status, exc.code, exc.title, None, **exc.extra) from exc
     current, current_set = designations.current(video_id, user.owner_id)
     wanted = (sorted(body.user_track_ids), sorted(body.opponent_track_ids))
+    by_role = {a.role: sorted(a.track_ids) for a in current.assignments}
     same = current.state == "ASSIGNED" and current_set == found.set_id and (
-        sorted(current.assignments[0].track_ids), sorted(current.assignments[1].track_ids)
+        by_role.get("USER", []), by_role.get("OPPONENT", [])
     ) == wanted
     if not same:  # 같은 선택을 다시 보내면 이력을 늘리지 않는다
         designations.save(video_id=video_id, owner_id=user.owner_id, observation=found, user=body.user_track_ids, opponent=body.opponent_track_ids)

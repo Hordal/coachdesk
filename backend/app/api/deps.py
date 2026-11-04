@@ -96,6 +96,8 @@ def authenticated_user(request: Request) -> User:
     """
     settings = request.app.state.settings
     if settings.auth_mode == "dev":
+        if settings.public_demo:
+            return User(user_id="public-demo", role="participant", display_name="공개 체험 공간")
         return User(user_id=settings.dev_user_id, role="admin", display_name="로컬 코치" if settings.app_profile == "workstation" else "개발 계정")
     session = request.app.state.auth.session_user(request.cookies.get(SESSION_COOKIE))
     if session is None:
@@ -107,7 +109,7 @@ def authenticated_user(request: Request) -> User:
 
 def current_user(request: Request, user: User = Depends(authenticated_user)) -> User:
     from dataclasses import replace
-    team_id = request.cookies.get(workspace_cookie(request))
+    team_id = None if request.app.state.settings.public_demo else request.cookies.get(workspace_cookie(request))
     if team_id:
         with request.app.state.db.tx() as conn:
             row = conn.execute("SELECT role FROM team_members WHERE team_id=? AND user_id=?", (team_id, user.user_id)).fetchone()

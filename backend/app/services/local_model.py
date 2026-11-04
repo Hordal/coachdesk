@@ -7,7 +7,7 @@ MODEL_URL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pos
 MODEL_SHA256 = "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1"
 MODEL_FILE = "pose_landmarker_full.task"
 MODEL_NAME = "MediaPipe Pose Full · CPU"
-ENGINE_VERSION = "coachdesk-local-pose-v1"
+ENGINE_VERSION = "coachdesk-local-pose-v2"
 
 
 def model_path() -> Path:

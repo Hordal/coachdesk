@@ -50,6 +50,19 @@ def prepare(app):
     return obs
 
 
+def test_solo_observations_are_not_counted_as_two_people(env):
+    app,c=env
+    obs=prepare(app)
+    app.state.designations.save(video_id="vid1",owner_id="dev-user",observation=obs,user=[1],opponent=[])
+    body=PoseImport.model_validate({"source":"test","poses":[{"frame_index":0,"timestamp_us":0,"track_id":1,"landmarks":landmarks()}]})
+    app.state.poses.create(owner_id="dev-user",video_id="vid1",payload=body,digest=pose_digest(body))
+    result=c.post("/api/v1/videos/vid1/actions",json={"events":[]})
+    assert result.status_code==201,result.text
+    summary=c.get(f"/api/v1/runs/{result.json()['run_id']}/observation-summary").json()
+    assert summary["sample_count"]==1
+    assert summary["both_observed_frames"]==0
+
+
 def test_team_scope_keeps_private_data_and_enforces_readonly_and_revocation(env):
     app,c=env
     add_video(app.state.db,duration=3_000_000)

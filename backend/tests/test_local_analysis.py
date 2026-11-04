@@ -15,6 +15,23 @@ from .test_manual_import import add_video
 from .test_observations import make_payload
 
 
+def test_hip_visibility_changes_do_not_move_tracking_center():
+    from types import SimpleNamespace
+    from app.services.local_inference import _observation
+    class Patch:
+        size=0
+    class Image:
+        shape=(540,960,3)
+        def __getitem__(self,key):return Patch()
+    points=[SimpleNamespace(x=.45+(i%2)*.1,y=.2+i*.015,visibility=.9,presence=.9) for i in range(33)]
+    first=_observation(points,Image())
+    points[23].visibility=points[24].visibility=.1
+    second=_observation(points,Image())
+    assert first["center"]==second["center"]
+    tracker=BoxTracker()
+    assert tracker.assign([first],0)==tracker.assign([second],40000)
+
+
 def frame(index,extension,*,state="VALID"):
     marks={name:{"x_px":x,"y_px":100.,"state":"VALID"} for name,x in
            [("left_shoulder",100.),("right_shoulder",200.),("left_elbow",140.),("left_wrist",100.+extension),

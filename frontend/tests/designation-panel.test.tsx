@@ -67,7 +67,7 @@ describe("선수 지정", () => {
     await userEvent.click(screen.getByRole("button", { name: "사진 속 번호 0 선수를 상대로 선택" }));
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "선택 저장" }));
-    await waitFor(() => expect(calls.find(c => c.method === "PUT")?.body).toEqual({set_id:"s1",user_track_ids:[1],opponent_track_ids:[0]}));
+    await waitFor(() => expect(calls.find(c => c.method === "PUT")?.body).toEqual({set_id:"s1",user_track_ids:[1],opponent_track_ids:[0],mode:"sparring"}));
   });
 
   it("선택하기 전에는 아무도 지정되어 있지 않고 확정할 수 없다", async () => {
@@ -87,7 +87,7 @@ describe("선수 지정", () => {
     expect(screen.getByRole("button", { name: "선택 저장" })).toBeDisabled(); // 상대가 아직 없다
     await userEvent.selectOptions(screen.getByLabelText("트랙 0"), "opponent");
     await userEvent.click(screen.getByRole("button", { name: "선택 저장" }));
-    await waitFor(() => expect(calls.find((c) => c.method === "PUT")?.body).toEqual({ set_id: "s1", user_track_ids: [1], opponent_track_ids: [0] }));
+    await waitFor(() => expect(calls.find((c) => c.method === "PUT")?.body).toEqual({ set_id: "s1", user_track_ids: [1], opponent_track_ids: [0], mode: "sparring" }));
   });
 
   it("나와 상대를 바꿀 수 있다", async () => {
@@ -100,7 +100,7 @@ describe("선수 지정", () => {
     expect(screen.getByLabelText("트랙 1")).toHaveValue("opponent");
     expect(screen.getByLabelText("트랙 0")).toHaveValue("user");
     await userEvent.click(screen.getByRole("button", { name: "선택 저장" }));
-    await waitFor(() => expect(calls.find((c) => c.method === "PUT")?.body).toEqual({ set_id: "s1", user_track_ids: [0], opponent_track_ids: [1] }));
+    await waitFor(() => expect(calls.find((c) => c.method === "PUT")?.body).toEqual({ set_id: "s1", user_track_ids: [0], opponent_track_ids: [1], mode: "sparring" }));
   });
 
   it("서버가 모순된 선택을 거절하면 이유를 보여 준다", async () => {
@@ -134,8 +134,18 @@ describe("선수 지정", () => {
 
   it("후보가 모자라거나 겹친 장면뿐이면 알려 준다", async () => {
     setup((path) => (path === "/api/v1/videos/v1/designation-frames" ? { status: 200, body: { ...frames(false), candidate_state: "INSUFFICIENT" } } : base(path)));
-    expect(await screen.findByText("후보 트랙이 두 개 미만이라 선수를 지정할 수 없습니다.")).toBeInTheDocument();
+    expect(await screen.findByText(/후보 트랙이 두 개 미만입니다/)).toBeInTheDocument();
     expect(screen.getByText(/서로 떨어져 보이는 프레임이 없어/)).toBeInTheDocument();
     expect(screen.getByLabelText("트랙 0")).toBeDisabled();
   });
+  it("개인 훈련에서는 후보 한 명만 선택해서 저장하고 상대를 만들지 않는다", async () => {
+    const calls = setup((path, method) => method === "PUT" ? {status:200,body:empty} : path.endsWith("/designation-frames") ? {status:200,body:{...frames(),candidate_state:"INSUFFICIENT"}} : base(path));
+    await userEvent.selectOptions(await screen.findByLabelText("영상 유형"), "solo");
+    await userEvent.click(screen.getByRole("button", {name:"사진 속 번호 1 선수를 분석 선수로 선택"}));
+    expect(screen.getByRole("button", {name:"선택 저장"})).toBeEnabled();
+    expect(screen.queryByRole("button", {name:/2. 상대 선수/})).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", {name:"선택 저장"}));
+    await waitFor(() => expect(calls.find(c => c.method === "PUT")?.body).toEqual({set_id:"s1",user_track_ids:[1],opponent_track_ids:[],mode:"solo"}));
+  });
+
 });

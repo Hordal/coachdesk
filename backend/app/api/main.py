@@ -23,6 +23,7 @@ from ..storage.memory import RunStore
 from ..storage.videos import VideoRepo
 from .errors import install_error_handlers
 from .v1 import auth, corrections, intake, observations, poses, runs, uploads, videos, workspace, teams, analysis
+from .v1 import research
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -67,9 +68,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(workspace.router, prefix="/api/v1")
     app.include_router(teams.router, prefix="/api/v1")
     app.include_router(analysis.router, prefix="/api/v1")
+    app.include_router(research.router, prefix="/api/v1")
 
     @app.middleware("http")
     async def response_protection(request, call_next):
+        if settings.public_demo and request.url.path.startswith(("/api/v1/admin/", "/api/v1/auth/", "/api/v1/analysis/keys", "/api/v1/worker/")):
+            from fastapi.responses import JSONResponse
+            return JSONResponse({"title": "공개 체험에서는 계정과 외부 모델 키를 관리하지 않습니다", "code": "public_demo_restricted"}, status_code=403)
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "same-origin"

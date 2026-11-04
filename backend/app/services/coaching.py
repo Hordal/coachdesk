@@ -6,16 +6,29 @@ def coaching_draft(view, participants, duration_us):
     user_ids = {p.participant_id for p in participants if str(p.role) == "USER"}
     rows = sorted((s for s in view.samples if s.participant_id in user_ids), key=lambda s: s.time_us)
     cards = []
+    diagnostics = {}
+    def usable(joints, names):
+        return all(k in joints and joints[k].state == "observed" and joints[k].score is not None and joints[k].score >= .65
+                   and joints[k].x is not None and joints[k].y is not None
+                   and math.isfinite(joints[k].x) and math.isfinite(joints[k].y) for k in names)
+    def sufficient(values):
+        return len(values) >= 12 and max(values)-min(values) >= 500_000
     for side, name in (("left", "왼손"), ("right", "오른손")):
-        observations = {}
+        torso_observations, shoulder_observations = {}, {}
         for sample in rows:
             joints = {j.name: j for j in sample.joints}
-            needed = ["left_shoulder", "right_shoulder", "left_hip", "right_hip", f"{side}_wrist"]
-            if any(k not in joints or joints[k].state != "observed" or joints[k].score is None or joints[k].score < .65
-                   or joints[k].x is None or joints[k].y is None
-                   or not math.isfinite(joints[k].x) or not math.isfinite(joints[k].y) for k in needed):
+            needed = ["left_shoulder", "right_shoulder", f"{side}_wrist"]
+            if not usable(joints, needed):
                 continue
             shoulder = joints[f"{side}_shoulder"]
+            drop = joints[f"{side}_wrist"].y-shoulder.y
+            width = math.hypot(joints["left_shoulder"].x-joints["right_shoulder"].x,
+                               joints["left_shoulder"].y-joints["right_shoulder"].y)
+            # A separate upper-body measurement, never estimate missing hips.
+            if width >= max(10, (view.height or 0)*.015):
+                shoulder_observations[sample.time_us] = drop/width > .35
+            if not usable(joints, ["left_hip", "right_hip"]):
+                continue
             sx = (joints["left_shoulder"].x + joints["right_shoulder"].x) / 2
             sy = (joints["left_shoulder"].y + joints["right_shoulder"].y) / 2
             hx = (joints["left_hip"].x + joints["right_hip"].x) / 2
@@ -23,9 +36,12 @@ def coaching_draft(view, participants, duration_us):
             torso = math.hypot(sx-hx, sy-hy)
             if torso < max(10, (view.height or 0)*.06):
                 continue
-            observations[sample.time_us] = (joints[f"{side}_wrist"].y-shoulder.y)/torso > .20
+            torso_observations[sample.time_us] = drop/torso > .20
+        diagnostics[side] = {"torso_samples": len(torso_observations), "upper_body_samples": len(shoulder_observations)}
+        upper_body = not sufficient(torso_observations)
+        observations = shoulder_observations if upper_body else torso_observations
         times = sorted(observations)
-        if len(times) < 12 or times[-1]-times[0] < 500_000:
+        if not sufficient(observations):
             continue
         # 가림을 건너뛰어 지속된 자세로 해석하지 않는다.
         stretches, current = [], []
@@ -60,11 +76,15 @@ def coaching_draft(view, participants, duration_us):
             "from_us": at, "to_us": min(duration_us, max(at+1, chosen[-1]+1 if chosen else at+2_000_000)),
             "image_us": at, "eligible_samples": len(times), "measured_percent": ratio,
             "status": "확인할 장면" if chosen else "위치 관찰",
+            "measurement_basis": "upper_body" if upper_body else "torso",
+            "measurement_note": "골반 관측이 부족해 양 어깨와 손목만 사용했습니다. 손목이 어깨보다 어깨 너비의 35% 이상 아래인지 측정합니다. 몸통 기준 수치와 직접 비교하지 마세요." if upper_body else "양 어깨·골반·손목으로 몸통 길이의 20%를 기준으로 측정합니다.",
             "subject_box": box,
         })
     cards.sort(key=lambda c:c["status"] != "확인할 장면")
-    return {"method": "screen-hand-height-v1", "kind": "규칙 기반 코칭 초안",
+    return {"method": "screen-hand-height-v2", "kind": "규칙 기반 코칭 초안",
             "scope": "분석 선수의 화면상 손 위치를 측정한 초안입니다. 촬영 각도·가림·공격 동작의 영향을 받으며, 원인과 훈련 제안은 코치 확인 후 적용합니다.",
             "cards": cards,
-            "insufficient_reason": None if cards else "어깨·골반·손목이 충분히 보이는 관측이 부족해 손 위치를 자동 평가하지 않았습니다.",
+            "diagnostics": diagnostics,
+            "observed_window": {"first_us": rows[0].time_us if rows else None, "last_us": rows[-1].time_us if rows else None, "sample_count": len(rows)},
+            "insufficient_reason": None if cards else f"양 어깨와 손목을 함께 확인한 관측이 왼손 {diagnostics['left']['upper_body_samples']}개, 오른손 {diagnostics['right']['upper_body_samples']}개입니다. 손별로 최소 12개와 0.5초 이상의 관측 범위가 필요합니다. 선수 지정에서 뒤쪽 장면의 같은 선수 번호도 연결했는지 확인해 주세요.",
             "manual_checks": ["타격 전과 직후 손이 어디에 있는지 비교하기", "공격 후 다음 동작을 준비하는 자세 확인하기", "같은 각도로 다시 촬영해 코치와 비교하기"]}

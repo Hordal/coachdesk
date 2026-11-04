@@ -35,3 +35,10 @@ it("provides a manual checklist instead of fabricating measured coaching when po
   expect(screen.getByText("공격 전후 손 위치 비교")).toBeInTheDocument();
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
 });
+
+it("shows the limited observed window and the upper-body measurement used",async()=>{
+  show(<CoachingDraft runId="r1"/>,()=>({available:true,video_id:"v1",duration_us:17000000,participants:[],coaching:{scope:"측정 제한",observed_window:{first_us:0,last_us:1280000,sample_count:31},cards:[{id:"left",title:"왼손 확인",observation:"관찰",interpretation:"확인",practice:"연습",check:"비교",from_us:0,to_us:1280000,image_us:0,status:"위치 관찰",measurement_note:"양 어깨와 손목으로 별도 측정"}],manual_checks:[]}}));
+  expect(await screen.findByText("분석에 사용된 구간")).toBeInTheDocument();
+  expect(screen.getByText("양 어깨와 손목으로 별도 측정")).toBeInTheDocument();
+  expect(screen.getByRole("link",{name:"선수 지정·추적 끊김 확인 →"})).toHaveAttribute("href","/videos/v1/observations");
+});

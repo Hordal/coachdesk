@@ -36,13 +36,18 @@ def research_pose_view(request, run, start: int, end: int):
     frames=state.poses.load_poses(run.bundle.video_id,pose_set.set_id)
     selected={}
     for frame in frames:
+        if frame.status in {"REJECTED", "NOT_RUN", "IDENTITY_UNRESOLVED"}:
+            continue
+        reasons = frame.model_extra.get("reasons", []) if frame.model_extra else []
+        if any("CONTAMINATION" in str(reason) or "IDENTITY" in str(reason) for reason in reasons):
+            continue
         participant=by_track.get(frame.track_id)
         if not participant or not frame.landmarks or not start<=frame.timestamp_us<end:
             continue
         joints=[]
         for name,mark in frame.landmarks.items():
             x,y=mark.x_px,mark.y_px
-            missing=mark.finite is False or mark.off_image is True or x is None or y is None
+            missing=mark.finite is False or mark.off_image is True or x is None or y is None or (mark.state is not None and mark.state != "VALID")
             score=min(v for v in (mark.visibility,mark.presence) if v is not None) if mark.visibility is not None or mark.presence is not None else None
             if missing or not math.isfinite(x) or not math.isfinite(y):
                 joints.append(Joint(name=name,state="missing",score=score))

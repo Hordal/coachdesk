@@ -31,6 +31,7 @@ class Settings:
     # 인증 방식. dev는 고정 계정(개발·시험 전용, 로그인 없음), session은 초대 계정과 쿠키 세션(21).
     # 배포할 때는 반드시 AUTH_MODE=session과 COOKIE_SECURE=1(TLS)로 실행한다.
     auth_mode: str = field(default_factory=lambda: os.environ.get("AUTH_MODE", "dev"))
+    public_demo: bool = field(default_factory=lambda: os.environ.get("PUBLIC_DEMO", "0") == "1")
     dev_user_id: str = "dev-user"
     cookie_secure: bool = field(default_factory=lambda: os.environ.get("COOKIE_SECURE", "0") == "1")
     session_ttl_seconds: int = 12 * 3600

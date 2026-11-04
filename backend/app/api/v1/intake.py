@@ -28,7 +28,7 @@ class CandidateEvent(EventIn):
 class ActionImport(Strict):
     source: str = Field(default="team-research", min_length=1, max_length=200)
     definition_version: str = Field(default="phase1b_v1", min_length=1, max_length=100)
-    events: list[CandidateEvent] = Field(min_length=1, max_length=100_000)
+    events: list[CandidateEvent] = Field(default_factory=list, max_length=100_000)
 
 
 CONTRACTS = {

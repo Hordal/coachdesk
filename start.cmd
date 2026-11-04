@@ -2,6 +2,8 @@
 cd /d "%~dp0"
 python setup_local.py
 if errorlevel 1 goto failed
+".venv\Scripts\python.exe" setup_analysis.py --if-needed
+if errorlevel 1 goto failed
 ".venv\Scripts\python.exe" run_local.py
 if errorlevel 1 goto failed
 exit /b 0

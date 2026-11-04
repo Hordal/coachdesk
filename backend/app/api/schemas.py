@@ -298,6 +298,7 @@ class DesignationRequest2(ApiModel):
     set_id: str = Field(description="선택의 기준이 된 검출·추적 결과 번호. 그 사이 결과가 바뀌었으면 거절한다")
     user_track_ids: list[int]
     opponent_track_ids: list[int]
+    mode: Literal["sparring", "solo"] = "sparring"
 
 
 class DesignationAssignmentView(ApiModel):

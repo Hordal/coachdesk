@@ -86,7 +86,12 @@ def _observation(points,image):
     bottom=min(1,max(p.y for p in visible)+.025)
     if right-left<.025 or bottom-top<.08:
         return None
-    center=(statistics.mean(p.x for p in torso),statistics.mean(p.y for p in torso))
+    # Visibility of the hips used to move the tracking center from shoulders to
+    # mid-torso even when the person stood still, creating many new track IDs.
+    shoulders=[points[k] for k in (11,12) if points[k].visibility>=.5 and points[k].presence>=.5
+               and math.isfinite(points[k].x) and math.isfinite(points[k].y)]
+    anchor=shoulders if len(shoulders)==2 else torso
+    center=(statistics.mean(p.x for p in anchor),statistics.mean(p.y for p in anchor))
     cx,cy=round(center[0]*width),round(center[1]*height)
     patch=image[max(0,cy-8):min(height,cy+9),max(0,cx-8):min(width,cx+9)]
     color=tuple(float(v)/255 for v in patch.mean(axis=(0,1))) if patch.size else (0.,0.,0.)

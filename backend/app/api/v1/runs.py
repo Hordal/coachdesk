@@ -267,7 +267,7 @@ def observation_summary(request: Request, run: StoredRun = Depends(owned_run), m
         people.append({"participant_id": participant.participant_id, "role": str(participant.role),
                        "frame_count": len(times), "first_us": times[0] if times else None,
                        "last_us": times[-1] if times else None})
-    shared = set.intersection(*({s.time_us for s in view.samples if s.participant_id == p.participant_id} for p in run.bundle.participants)) if run.bundle.participants else set()
+    shared = set.intersection(*({s.time_us for s in view.samples if s.participant_id == p.participant_id} for p in run.bundle.participants)) if len(run.bundle.participants) >= 2 else set()
     from ...services.coaching import coaching_draft
     return {"available": view.available, "reason_code": view.reason_code, "duration_us": run.bundle.duration_us,
             "sample_count": len(view.samples), "participants": people,

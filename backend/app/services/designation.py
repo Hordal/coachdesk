@@ -80,11 +80,13 @@ def candidate_frames(tracks: list[TrackRecord], observation: ObservationSet, tra
         result.append(CandidateFrame(index, tracks[index].timestamp_us, flag, boxes))
     return result
 
-def check_selection(tracks: list[TrackRecord], known: set[int], user: list[int], opponent: list[int]) -> None:
+def check_selection(tracks: list[TrackRecord], known: set[int], user: list[int], opponent: list[int], *, solo: bool = False) -> None:
     """선택이 데이터와 모순되지 않는지 검사한다. 어긋나는 점을 모두 모아 알린다."""
     problems: list[str] = []
-    if not user or not opponent:
+    if not user or (not solo and not opponent):
         raise DesignationError(422, "selection_incomplete", "사용자와 상대의 트랙을 모두 골라야 함")
+    if solo and opponent:
+        raise DesignationError(422, "solo_has_opponent", "개인 훈련에서는 상대를 지정하지 않습니다")
     for label, ids in (("사용자", user), ("상대", opponent)):
         if len(set(ids)) != len(ids):
             problems.append(f"{label} 트랙에 같은 번호가 두 번 있음")
@@ -129,10 +131,8 @@ class DesignationRepo:
     def save(self, *, video_id: str, owner_id: str, observation: ObservationSet, user: list[int], opponent: list[int]) -> TrackAssignmentSet:
         assignment = TrackAssignmentSet(
             state="ASSIGNED",
-            assignments=[
-                TrackAssignment(participant_id=USER_PARTICIPANT_ID, role="USER", track_ids=sorted(user)),
-                TrackAssignment(participant_id=OPPONENT_PARTICIPANT_ID, role="OPPONENT", track_ids=sorted(opponent)),
-            ],
+            assignments=[TrackAssignment(participant_id=USER_PARTICIPANT_ID, role="USER", track_ids=sorted(user))]
+            + ([TrackAssignment(participant_id=OPPONENT_PARTICIPANT_ID, role="OPPONENT", track_ids=sorted(opponent))] if opponent else []),
         )
         with self._db.tx(immediate=True) as conn:
             conn.execute(

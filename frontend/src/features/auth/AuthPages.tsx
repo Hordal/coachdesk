@@ -32,6 +32,7 @@ export function RequireAuth() {
 }
 
 export function LoginPage() {
+  const me = useMe();
   const navigate = useNavigate();
   const location = useLocation();
   const login = useLogin();
@@ -46,6 +47,7 @@ export function LoginPage() {
     );
   }
 
+  if (me.data?.auth_mode === "dev") return <Navigate to="/" replace />;
   return (
     <>
       <h1>로그인</h1>
